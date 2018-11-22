@@ -424,13 +424,13 @@ const table = (parsedCode)=>{
 //analyzeCode(parsedCode);
     iterateStatements(parsedCode);
 
-
+    var ans = []
     for (var statement in list){
-        console.log(list[statement])
+        ans.push(list[statement])
     }
 
     //console.log(parsedCode);
-    return '';
+    return ans;
 }
 
 

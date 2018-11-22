@@ -1,5 +1,5 @@
 import assert from 'assert';
-import {parseCode} from '../src/js/code-analyzer';
+import {parseCode,table} from '../src/js/code-analyzer';
 
 describe('The javascript parser', () => {
     it('is parsing an empty function correctly', () => {
@@ -18,4 +18,12 @@ describe('The javascript parser', () => {
         );
     });
     */
+
+    it('is parsing a simple variable declaration correctly', () => {
+        assert.equal(
+            JSON.stringify(table(parseCode('let a = 1;'))),
+            '[{"line":1,"type":"VariableDeclarator","name":"a","condition":"","value":1}]'
+        );
+    });
+
 });
