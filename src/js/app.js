@@ -6,8 +6,8 @@ $(document).ready(function () {
         let codeToParse = $('#codePlaceholder').val();
         let parsedCode = parseCode(codeToParse);
         let str = table(parsedCode);
-        console.log("Hello world!");
-        console.log(parsedCode);
+        //console.log('Hello world!');
+        //console.log(parsedCode);
 
 
         $('#parsedCode').val(JSON.stringify(parsedCode, null, 2));

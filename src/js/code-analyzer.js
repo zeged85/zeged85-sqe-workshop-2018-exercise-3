@@ -5,334 +5,380 @@ const parseCode = (codeToParse) => {
     return esprima.parseScript(codeToParse,{loc:true});
 };
 
-var list = []
+var list = [];
+
+function addReturnStatement(node){
+    var obj = {
+        line : node.loc.start.line,
+        type : node.type,
+        name : '',
+        condition : '',
+        value : getStatement(node.argument)
+    };
+    list.push(obj);
+}
 
 
+function addAssignmentExpression(node){
+    var obj = {
+        line : node.loc.start.line,
+        type : node.type,
+        name : getStatement(node.left),
+        condition : '',
+        value : getStatement(node.right)
+    };
+    list.push(obj);
+}
 
-function addStatement(node){
-
-
-
-
-
-    if (node.type==="ExpressionStatement"){
-        addStatement(node.expression)
-        return;
+function addVariableDeclaration(node){
+    for (let dec in node.declarations){
+        addStatement(node.declarations[dec]);
     }
+}
 
+function addVariableDeclarator(node){
+    var obj = {
+        line : node.loc.start.line,
+        type : node.type,
+        name : getStatement(node.id),
+        condition : '',
+        value : getStatement(node.init)
+    };
+    list.push(obj);
+}
 
-    if (node.type==="ReturnStatement"){
-        var obj = {
-            line : node.loc.start.line,
-            type : node.type,
-            name : "",
-            condition : "",
-            value : getStatement(node.argument)
-        }
-        list.push(obj);
-        return;
+function addIfStatement(node){
+    var obj = {
+        line : node.loc.start.line,
+        type : node.type,
+        name : '',
+        condition : getStatement(node.test),
+        value : ''
+    };
+    //else if
+    if (node.else){
+        obj.type = 'else ' + node.type;
     }
+    list.push(obj);
 
-
-
-    if (node.type==="AssignmentExpression"){
-        var obj = {
-            line : node.loc.start.line,
-            type : node.type,
-            name : getStatement(node.left),
-            condition : "",
-            value : getStatement(node.right)
+    addStatement(node.consequent);
+    if (node.alternate){
+        if (node.alternate.type==='IfStatement'){
+            node.alternate.else=true;
         }
-        list.push(obj);
-        return;
-  }
-
-
-  if (node.type==="VariableDeclaration"){
-      for (var dec in node.declarations){
-          addStatement(node.declarations[dec])
-      }
-      return
-  }
-
-    if (node.type==="VariableDeclarator"){
-        var obj = {
-            line : node.loc.start.line,
-            type : node.type,
-            name : getStatement(node.id),
-            condition : "",
-            value : getStatement(node.init)
+        else{
+            var obj = {
+                line : node.consequent.loc.end.line+1,
+                type : 'else statement',
+                name : '',
+                condition : '',
+                value : ''
+            };
+            list.push(obj);
         }
-        list.push(obj);
-        return;
+
+        addStatement(node.alternate);
     }
+}
 
-    if (node.type==="IfStatement"){
-        var obj = {
-            line : node.loc.start.line,
-            type : node.type,
-            name : "",
-            condition : getStatement(node.test),
-            value : ""
-        }
-        //else if
-        if (node.else){
-            obj.type = "else " + node.type
-        }
-        list.push(obj);
-
-        addStatement(node.consequent)
-        if (node.alternate){
-            if (node.alternate.type==="IfStatement"){
-                node.alternate.else=true;
-            }
-            else{
-                var obj = {
-                    line : node.consequent.loc.end.line+1,
-                    type : "else statement",
-                    name : "",
-                    condition : "",
-                    value : ""
-                }
-                list.push(obj);
-            }
-
-            addStatement(node.alternate)
-        }
-        return;
-
-    }
-
-if (node.type==="FunctionDeclaration"){
+function addFunctionDeclaration(node){
     var obj = {
         line : node.loc.start.line,
         type : node.type,
         name : node.id.name,
-        condition : "",
-        value : ""
-    }
+        condition : '',
+        value : ''
+    };
     list.push(obj);
 
     //push params
     for (var param in node.params){
         var obj = {
             line : node.loc.start.line,
-            type : "VariableDeclarator",
+            type : 'VariableDeclarator',
             name : getStatement(node.params[param]),
-            condition : "",
-            value : ""
-        }
+            condition : '',
+            value : ''
+        };
 
         list.push(obj);
     }
 
     //push function body
     for (var statment in node.body.body) {
-        addStatement(node.body.body[statment])
+        addStatement(node.body.body[statment]);
 
     }
-   // list.push(obj);
 
-    return
 }
 
-
-if (node.type==="WhileStatement"){
+function addWhileStatement(node){
     var obj = {
         line : node.loc.start.line,
         type : node.type,
-        name : "",
+        name : '',
         condition : getStatement(node.test),
-        value : ""
-    }
+        value : ''
+    };
     list.push(obj);
     for (var statement in node.body.body){
-        addStatement(node.body.body[statement])
+        addStatement(node.body.body[statement]);
     }
-    return;
 }
 
-if (node.type==="ForStatement"){
+
+function addForStatement(node){
     var obj = {
         line : node.loc.start.line,
         type : node.type,
-        name : "",
-        condition : getStatement(node.init) +";"+ getStatement(node.test)+";"+getStatement(node.update),
-        value : ""
-    }
+        name : '',
+        condition : getStatement(node.init) +';'+ getStatement(node.test)+';'+getStatement(node.update),
+        value : ''
+    };
 
     list.push(obj);
     for (var statement in node.body.body){
-        addStatement(node.body.body[statement])
+        addStatement(node.body.body[statement]);
     }
-    return;
 }
 
 
+function addStatement(node){
+
+    if (node.type==='ExpressionStatement'){
+        addStatement(node.expression);
+        return;
+    }
+
+
+    if (node.type==='ReturnStatement'){
+        addReturnStatement(node);
+        return;
+    }
+
+
+
+    if (node.type==='AssignmentExpression'){
+        addAssignmentExpression(node);
+        return;
+    }
+
+
+    if (node.type==='VariableDeclaration'){
+        addVariableDeclaration(node);
+        return;
+    }
+
+    if (node.type==='VariableDeclarator'){
+
+        addVariableDeclarator(node);
+        return;
+    }
+
+    if (node.type==='IfStatement'){
+        addIfStatement(node);
+        return;
+    }
+
+    if (node.type==='FunctionDeclaration'){
+        addFunctionDeclaration(node);
+        return;
+    }
+
+
+    if (node.type==='WhileStatement'){
+        addWhileStatement(node);
+        return;
+    }
+
+    if (node.type==='ForStatement'){
+        addForStatement(node);
+        return;
+    }
+
+
 }
 
-function getStatement(node){
-    if (node===null){
-        return "";
-    }
+function getLiteral(node){
+    return node.value;
+}
 
-    if (node.type==="Literal"){
-        return node.value;
-    }
-    if (node.type==="Identifier"){
-        return node.name;
-    }
+function getIdentifier(node){
+    return node.name;
+}
 
-    if (node.type==="VariableDeclaration"){
-        var str = "";
+function getVariableDeclaration(node){
+    var str = '';
 
-        var first = true;
+    var first = true;
 
-        for (var dec in node.declarations){
-            if (first) {
-                str += getStatement(node.declarations[dec])
-                first=false
-            }
-            else{
-                str += ","+getStatement(node.declarations[dec])
-            }
+    for (var dec in node.declarations){
+        if (first) {
+            str += getStatement(node.declarations[dec]);
+            first=false;
         }
-        return str;
-    }
-
-
-    if (node.type==="SequenceExpression"){
-        var str = "";
-
-        var first = true;
-
-        for (var exp in node.expressions){
-            if (first) {
-                str += getStatement(node.expressions[exp])
-                first=false
-            }
-            else{
-                str += ","+getStatement(node.expressions[exp])
-            }
+        else{
+            str += ','+getStatement(node.declarations[dec]);
         }
-        return str;
     }
-
-
-
-    if (node.type==="VariableDeclarator"){
-        return getStatement(node.id) + "=" + getStatement(node.init)
-    }
-
-    if (node.type==="MemberExpression"){
-        return getStatement(node.object) + "["+getStatement(node.property)+"]"
-    }
-
-
-    if (node.type==="UnaryExpression"){
-        return node.operator + getStatement(node.argument)
-    }
-
-    if (node.type==="BinaryExpression"){
-        var left = getStatement(node.left)
-        var right = getStatement(node.right)
-
-        if (node.operator==='*' || node.operator==='/') {
-            if (node.left.type==="BinaryExpression" && (node.left.operator=="+" || node.left.operator=="-")){
-                left = "(" + left + ")"
-            }
-            if (node.right.type==="BinaryExpression" && (node.right.operator=="+" || node.right.operator=="-")){
-                right = "(" + right + ")"
-            }
-        }
-        return left + node.operator + right;
-
-    }
-
-if (node.type==="UpdateExpression"){
-    if (node.prefix===false){
-        return getStatement(node.argument)+node.operator
-    }
-    else{
-        return node.operator + getStatement(node.argument)
-    }
-
-}
-
-
-    if (node.type==="AssignmentExpression"){
-        return getStatement(node.left) +"="+getStatement(node.right)
-    }
-
-
-    return "";
-}
-
-function analyze(node){
-
-    let str = "line:"+node.loc.start.line+" type:"+node.type+" name:";
-
-    if (node.type==="FunctionDeclaration"){
-        str += node.id.name;
-    }
-
-    if (node.type==="AssignmentExpression"){
-        str +=getToken(node.left) + " value:" + getToken(node.right);
-    }
-
     return str;
 }
 
+function getSequenceExpression(node){
+    var str = '';
+
+    var first = true;
+
+    for (var exp in node.expressions){
+        if (first) {
+            str += getStatement(node.expressions[exp]);
+            first=false;
+        }
+        else{
+            str += ','+getStatement(node.expressions[exp]);
+        }
+    }
+    return str;
+}
+
+function getVariableDeclarator(node){
+    return getStatement(node.id) + '=' + getStatement(node.init);
+}
+
+function getMemberExpression(node){
+    return getStatement(node.object) + '['+getStatement(node.property)+']';
+}
+
+function getUnaryExpression(node){
+    return node.operator + getStatement(node.argument);
+}
+
+function getBinaryExpression(node){
+    var left = getStatement(node.left);
+    var right = getStatement(node.right);
+
+    if (node.operator==='*' || node.operator==='/') {
+        if (node.left.type==='BinaryExpression' && (node.left.operator=='+' || node.left.operator=='-')){
+            left = '(' + left + ')';
+        }
+        if (node.right.type==='BinaryExpression' && (node.right.operator=='+' || node.right.operator=='-')){
+            right = '(' + right + ')';
+        }
+    }
+    return left + node.operator + right;
+
+}
+
+function getUpdateExpression(node){
+    if (node.prefix===false){
+        return getStatement(node.argument)+node.operator;
+    }
+    else{
+        return node.operator + getStatement(node.argument);
+    }
+
+}
+
+function getAssignmentExpression(node){
+    return getStatement(node.left) +'='+getStatement(node.right);
+}
+
+function getStatement(node){
+
+    if (node.type==='Literal'){
+        return getLiteral(node);
+    }
+    if (node.type==='Identifier'){
+        return getIdentifier(node);
+    }
+
+    if (node.type==='VariableDeclaration'){
+        return getVariableDeclaration(node);
+    }
+
+
+    if (node.type==='SequenceExpression'){
+        return getSequenceExpression(node);
+    }
+
+
+    if (node.type==='VariableDeclarator'){
+        return getVariableDeclarator(node);
+    }
+
+    if (node.type==='MemberExpression'){
+        return getMemberExpression(node);
+    }
+
+    if (node.type==='UnaryExpression'){
+        return getUnaryExpression(node);
+    }
+
+    if (node.type==='BinaryExpression'){
+        return getBinaryExpression(node);
+    }
+
+    if (node.type==='UpdateExpression'){
+        return getUpdateExpression(node);
+    }
+
+    if (node.type==='AssignmentExpression'){
+        return getAssignmentExpression(node);
+    }
+
+
+    return '';
+}
+
+
+/*
 function morph(node){
     if (node.type===undefined){
 
     }
-    node.type==="Program" ? console.log("program")
-        :node.type==="FunctionDeclaration" ? console.log("function: "
-        + node.id.name + " params: " + node.params.length)
-    :node.type=== "Identifier" ? console.log( node.name)
-    :node.type=== "Literal" ? console.log( node.value)
-     :node.type==="operator" ? console.log("operator:" )
-                :node.type==="VariableDeclaration" ? console.log("VariableDeclaration")
-    :node.type==="BlockStatement"  ? console.log("BlockStatement")
-                        :node.type==="VariableDeclarator" ? console.log("VariableDeclarator")
-                            :node.type==="ExpressionStatement" ? console.log("ExpressionStatement")
-        :node.type==="AssignmentExpression" ? console.log("AssignmentExpression")
-        : console.log("else:" + node);
+    node.type==='Program' ? console.log('program')
+        :node.type==='FunctionDeclaration' ? console.log('function: '
+        + node.id.name + ' params: ' + node.params.length)
+            :node.type=== 'Identifier' ? console.log( node.name)
+                :node.type=== 'Literal' ? console.log( node.value)
+                    :node.type==='operator' ? console.log('operator:' )
+                        :node.type==='VariableDeclaration' ? console.log('VariableDeclaration')
+                            :node.type==='BlockStatement'  ? console.log('BlockStatement')
+                                :node.type==='VariableDeclarator' ? console.log('VariableDeclarator')
+                                    :node.type==='ExpressionStatement' ? console.log('ExpressionStatement')
+                                        :node.type==='AssignmentExpression' ? console.log('AssignmentExpression')
+                                            : console.log('else:' + node);
 
 
 
-    /*
+
     if (node.type==="Identifier"){
         console.log(node.name)
     }
     if (node.type==="Literal"){
         console.log(node.value)
     }
-*/
-    //return "else";
-}
 
+    return "else";
+}*/
+
+/*
 function analyzeCode(code) {
     var ast = code;
     traverse(ast, function(node) {
         if (node.type === undefined){
-          //  console.log("undefined:"+ node)
+            //  console.log("undefined:"+ node)
         }
         else {
 
-           /* console.log(node.type + " line:" + node.loc.start.line +" "
-                + node.name + " " + node.value);*/
-           /* if (node.id && node.id.name){
-                console.log(":" + node.id.name);
-            }*/
-           // console.log(node.loc)
-            console.log(getToken(node))
+
+            // console.log(node.loc)
+            console.log(getToken(node));
         }
     });
-}
+}*/
 
-
+/*
 function traverse(node, func) {
     if (node.type !== undefined){
         func(node);//1
@@ -347,7 +393,7 @@ function traverse(node, func) {
 
                 if (Array.isArray(child)) {
                     child.forEach(function(node) { //5
-                        console.log("->")
+                        console.log('->');
                         traverse(node, func);
                     });
                 } else {
@@ -356,7 +402,7 @@ function traverse(node, func) {
             }
         }
     }
-}
+}*/
 
 ///enums?
 /*
@@ -387,51 +433,24 @@ function iterateStatements(root){
 
     let body = root.body;
     for (let line in body){
-        addStatement(body[line])
+        addStatement(body[line]);
     }
 }
 
 
 const table = (parsedCode)=>{
 
-    console.log(parsedCode.type);
-    if (parsedCode.type!=="Program"){
-        console.log("no program 1st header");
-    }
-    else{
-        console.log("ok");
-    }
 
-    console.log("body length:" + parsedCode["body"].length);
-    if (parsedCode["body"].length==0){
-        console.log("body is empty");
-    }
-
-/*
-    for (var key in parsedCode["body"]){
-        console.log(key +":"+parsedCode["body"][key].type);
-        //console.log(key);
-
-    }
-    */
-    //var globalScope = escope.analyze(parsedCode).scopes[0];
-
-
-    let title = parsedCode;
-    let x=0;
-    ///
-
-//analyzeCode(parsedCode);
     iterateStatements(parsedCode);
 
-    var ans = []
+    var ans = [];
     for (var statement in list){
-        ans.push(list[statement])
+        ans.push(list[statement]);
     }
 
     //console.log(parsedCode);
     return ans;
-}
+};
 
 
 
