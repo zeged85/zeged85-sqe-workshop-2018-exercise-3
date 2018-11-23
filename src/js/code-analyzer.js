@@ -226,6 +226,7 @@ function getAssignmentExpression(node){
 }
 
 function getStatement(node){
+    //for null init in var declaration. (node.init)
     if (node===null){
         return '';
     }
