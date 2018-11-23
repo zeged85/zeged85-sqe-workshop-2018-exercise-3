@@ -6,9 +6,7 @@ $(document).ready(function () {
         let codeToParse = $('#codePlaceholder').val();
         let parsedCode = parseCode(codeToParse);
         let str = table(parsedCode);
-        if (str){
-            str;
-        }
+
         //console.log('Hello world!');
         //console.log(parsedCode);
 

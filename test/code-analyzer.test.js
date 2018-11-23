@@ -22,6 +22,16 @@ describe('The javascript parser', () => {
 
 });
 
+describe('Code-Analyzer', () =>{
+    it('it is testing 1', () => {
+        assert.equal(
+            JSON.stringify(table(parseCode('x=3;y=6+i;'))),
+            '[{"line":1,"type":"AssignmentExpression","name":"x","condition":"","value":3},{"line":1,"type":"AssignmentExpression","name":"y","condition":"","value":"6+i"}]'
+        );
+    });
+
+});
+
 /*
 it('is parsing multiple variable declarations correctly', () => {
     assert.equal(
