@@ -7,27 +7,25 @@ const parseCode = (codeToParse) => {
 
 var list = [];
 
-function addReturnStatement(node){
-    var obj = {
-        line : node.loc.start.line,
-        type : node.type,
-        name : '',
-        condition : '',
-        value : getStatement(node.argument)
+
+function appendObject(line,type,name,condition,value) {
+    const obj = {
+        line : line,
+        type : type,
+        name : name,
+        condition : condition,
+        value : value
     };
     list.push(obj);
 }
 
+function addReturnStatement(node){
+    appendObject(node.loc.start.line,node.type,'','',getStatement(node.argument));
+}
+
 
 function addAssignmentExpression(node){
-    var obj = {
-        line : node.loc.start.line,
-        type : node.type,
-        name : getStatement(node.left),
-        condition : '',
-        value : getStatement(node.right)
-    };
-    list.push(obj);
+    appendObject(node.loc.start.line,node.type,getStatement(node.left),'',getStatement(node.right));
 }
 
 function addVariableDeclaration(node){
@@ -37,90 +35,47 @@ function addVariableDeclaration(node){
 }
 
 function addVariableDeclarator(node){
-    var obj = {
-        line : node.loc.start.line,
-        type : node.type,
-        name : getStatement(node.id),
-        condition : '',
-        value : getStatement(node.init)
-    };
-    list.push(obj);
+    appendObject(node.loc.start.line,node.type,getStatement(node.id),'',getStatement(node.init));
 }
 
 function addIfStatement(node){
-    var obj = {
-        line : node.loc.start.line,
-        type : node.type,
-        name : '',
-        condition : getStatement(node.test),
-        value : ''
-    };
-    //else if
-    if (node.else){
-        obj.type = 'else ' + node.type;
-    }
-    list.push(obj);
+    //check else if
+    let type = node.else ? 'else '+ node.type : node.type;
+    appendObject(node.loc.start.line,type,'',getStatement(node.test),'');
+
 
     addStatement(node.consequent);
+
+
     if (node.alternate){
         if (node.alternate.type==='IfStatement'){
             node.alternate.else=true;
         }
         else{
-            var obj = {
-                line : node.consequent.loc.end.line+1,
-                type : 'else statement',
-                name : '',
-                condition : '',
-                value : ''
-            };
-            list.push(obj);
+            appendObject(node.consequent.loc.end.line+1,'else statement','','','');
         }
-
         addStatement(node.alternate);
     }
 }
 
 function addFunctionDeclaration(node){
-    var obj = {
-        line : node.loc.start.line,
-        type : node.type,
-        name : node.id.name,
-        condition : '',
-        value : ''
-    };
-    list.push(obj);
+    appendObject(node.loc.start.line,node.type,node.id.name,'','');
 
     //push params
     for (var param in node.params){
-        var obj = {
-            line : node.loc.start.line,
-            type : 'VariableDeclarator',
-            name : getStatement(node.params[param]),
-            condition : '',
-            value : ''
-        };
-
-        list.push(obj);
+        appendObject(node.loc.start.line,'VariableDeclarator',getStatement(node.params[param]),'','');
     }
 
     //push function body
-    for (var statment in node.body.body) {
-        addStatement(node.body.body[statment]);
+    for (var statement in node.body.body) {
+        addStatement(node.body.body[statement]);
 
     }
 
 }
 
 function addWhileStatement(node){
-    var obj = {
-        line : node.loc.start.line,
-        type : node.type,
-        name : '',
-        condition : getStatement(node.test),
-        value : ''
-    };
-    list.push(obj);
+    appendObject(node.loc.start.line,node.type,'',getStatement(node.test),'');
     for (var statement in node.body.body){
         addStatement(node.body.body[statement]);
     }
@@ -128,30 +83,43 @@ function addWhileStatement(node){
 
 
 function addForStatement(node){
-    var obj = {
-        line : node.loc.start.line,
-        type : node.type,
-        name : '',
-        condition : getStatement(node.init) +';'+ getStatement(node.test)+';'+getStatement(node.update),
-        value : ''
-    };
+    let condition = getStatement(node.init) +';'+ getStatement(node.test)+';'+getStatement(node.update);
+    appendObject(node.loc.start.line,node.type,'',condition,'');
 
-    list.push(obj);
     for (var statement in node.body.body){
         addStatement(node.body.body[statement]);
     }
 }
 
+function addExpression(node){
+    addStatement(node.expression);
+}
 
 function addStatement(node){
 
-    if (node.type==='ExpressionStatement'){
+
+    var choices = {
+        'ExpressionStatement' : addExpression,
+        'ReturnStatement' : addExpression,
+        'AssignmentExpression' : addAssignmentExpression,
+        'VariableDeclaration' : addVariableDeclaration,
+        'VariableDeclarator' : addVariableDeclarator,
+        'IfStatement' : addIfStatement,
+        'FunctionDeclaration' : addFunctionDeclaration,
+        'WhileStatement' : addWhileStatement,
+        'ForStatement' : addForStatement,
+    };
+
+    choices[node.type](node);
+
+
+/*
+    if (node.type === 'ExpressionStatement') {
         addStatement(node.expression);
         return;
     }
 
-
-    if (node.type==='ReturnStatement'){
+    if (node.type === 'ReturnStatement') {
         addReturnStatement(node);
         return;
     }
@@ -196,7 +164,7 @@ function addStatement(node){
         return;
     }
 
-
+*/
 }
 
 function getLiteral(node){
@@ -284,6 +252,9 @@ function getAssignmentExpression(node){
 }
 
 function getStatement(node){
+    if (node===null){
+        return '';
+    }
 
     if (node.type==='Literal'){
         return getLiteral(node);
@@ -446,6 +417,7 @@ const table = (parsedCode)=>{
     var ans = [];
     for (var statement in list){
         ans.push(list[statement]);
+        console.log(list[statement]);
     }
 
     //console.log(parsedCode);
