@@ -5,7 +5,7 @@ const parseCode = (codeToParse) => {
     return esprima.parseScript(codeToParse,{loc:true});
 };
 
-var list = [];
+let list = [];
 
 
 function appendObject(line,type,name,condition,value) {
@@ -62,12 +62,12 @@ function addFunctionDeclaration(node){
     appendObject(node.loc.start.line,node.type,node.id.name,'','');
 
     //push params
-    for (var param in node.params){
+    for (let param in node.params){
         appendObject(node.loc.start.line,'VariableDeclarator',getStatement(node.params[param]),'','');
     }
 
     //push function body
-    for (var statement in node.body.body) {
+    for (let statement in node.body.body) {
         addStatement(node.body.body[statement]);
 
     }
@@ -76,7 +76,7 @@ function addFunctionDeclaration(node){
 
 function addWhileStatement(node){
     appendObject(node.loc.start.line,node.type,'',getStatement(node.test),'');
-    for (var statement in node.body.body){
+    for (let statement in node.body.body){
         addStatement(node.body.body[statement]);
     }
 }
@@ -86,7 +86,7 @@ function addForStatement(node){
     let condition = getStatement(node.init) +';'+ getStatement(node.test)+';'+getStatement(node.update);
     appendObject(node.loc.start.line,node.type,'',condition,'');
 
-    for (var statement in node.body.body){
+    for (let statement in node.body.body){
         addStatement(node.body.body[statement]);
     }
 }
@@ -107,7 +107,7 @@ function addUpdateExpression(node){
 }
 
 function addBlockStatement(node){
-    for (var statement in node.body){
+    for (let statement in node.body){
         addStatement(node.body[statement]);
     }
 }
@@ -116,7 +116,7 @@ function addBlockStatement(node){
 function addStatement(node){
 
 
-    var choices = {
+    const choices = {
         'ExpressionStatement' : addExpression,
         'ReturnStatement' : addReturnStatement,
         'AssignmentExpression' : addAssignmentExpression,
@@ -143,9 +143,9 @@ function getIdentifier(node){
 }
 
 function getVariableDeclaration(node){
-    var str = '';
+    let str = '';
 
-    var first = true;
+    let first = true;
 
     for (var dec in node.declarations){
         if (first) {
@@ -160,11 +160,11 @@ function getVariableDeclaration(node){
 }
 
 function getSequenceExpression(node){
-    var str = '';
+    let str = '';
 
-    var first = true;
+    let first = true;
 
-    for (var exp in node.expressions){
+    for (let exp in node.expressions){
         if (first) {
             str += getStatement(node.expressions[exp]);
             first=false;
@@ -228,7 +228,7 @@ function getStatement(node){
     if (node===null){
         return '';
     }
-    var choices = {
+    const choices = {
         'Literal' : getLiteral,
         'Identifier' : getIdentifier,
         'VariableDeclaration' : getVariableDeclaration,
@@ -261,8 +261,8 @@ const table = (parsedCode)=>{
 
     iterateStatements(parsedCode);
 
-    var ans = [];
-    for (var statement in list){
+    let ans = [];
+    for (let statement in list){
         ans.push(list[statement]);
         //console.log(list[statement]);
     }
@@ -273,12 +273,6 @@ const table = (parsedCode)=>{
     list = [];
     return ans;
 };
-
-
-
-
-
-
 
 
 export {parseCode,table};

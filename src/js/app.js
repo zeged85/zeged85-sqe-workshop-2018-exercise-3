@@ -41,10 +41,14 @@ function fillTableData(table,data){
         i++;
         let row = table.insertRow(i);
         let j = 0;
-        for (let y in data[x]){
-            let cell1 = row.insertCell(j);
-            j++;
-            cell1.innerHTML = data[x][y];
+        if (data.hasOwnProperty(x)) {
+            for (let y in data[x]) {
+                let cell1 = row.insertCell(j);
+                j++;
+                if (data[x].hasOwnProperty(y)) {
+                    cell1.innerHTML = data[x][y];
+                }
+            }
         }
     }
 }
