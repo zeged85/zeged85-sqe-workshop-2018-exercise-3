@@ -7,6 +7,7 @@
             table {
                 width: 100%;
                 height: 100%;
+                vertical-align: top;
             }
 
             .textAreaWrapper {
@@ -42,17 +43,19 @@
                 </td>
                 <td>
                     <div class="textAreaWrapper">
-                        <textarea id="parsedCode" title="Parse code"></textarea>
-                        <table id="parsedTable" border="1">
-                            <tr>
-                                <th>Line</th>
-                                <th>Type</th>
-                                <th>Name</th>
-                                <th>Condition</th>
-                                <th>Value</th>
-                            </tr>
+                        <div class="table">
+                             <!--- <textarea id="parsedCode" title="Parse code"></textarea> -->
+                            <table id="parsedTable" border="1" style="width:100%">
+                                <tr>
+                                    <th>Line</th>
+                                    <th>Type</th>
+                                    <th>Name</th>
+                                    <th>Condition</th>
+                                    <th>Value</th>
+                                </tr>
 
                         </table>
+                        </div>
                     </div>
                 </td>
             </tr>

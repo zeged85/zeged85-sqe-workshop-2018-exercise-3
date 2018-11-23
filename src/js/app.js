@@ -8,7 +8,7 @@ $(document).ready(function () {
         let str = table(parsedCode);
 
 
-        $('#parsedCode').val(JSON.stringify(parsedCode, null, 2));
+        //$('#parsedCode').val(JSON.stringify(parsedCode, null, 2));
 
         let res = makeTableHTML(str);
         //console.log(res);
