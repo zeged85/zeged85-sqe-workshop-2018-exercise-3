@@ -30,7 +30,48 @@ describe('Code-Analyzer', () =>{
         );
     });
 
+    it('it is testing 2', () => {
+        assert.equal(
+            JSON.stringify(table(parseCode('let x=3*5+6;y=(6+i)*4;'))),
+            '[{"line":1,"type":"VariableDeclarator","name":"x","condition":"","value":"3*5+6"},{"line":1,"type":"AssignmentExpression","name":"y","condition":"","value":"(6+i)*4"}]'
+        );
+    });
+
+
 });
+
+
+describe('Code-Analyzer - functions', () =>{
+    it('it is testing function', () => {
+        assert.equal(
+            JSON.stringify(table(parseCode('function Search(){\n++x;\n}'))),
+            '[{"line":1,"type":"FunctionDeclaration","name":"Search","condition":"","value":""},{"line":2,"type":"UpdateExpression","name":"x","condition":"","value":"++x"}]'
+        );
+    });
+
+
+
+
+});
+
+
+
+
+
+
+/*
+describe('Code-Analyzer2', () =>{
+    it('it is testing 2', () => {
+        assert.equal(
+            JSON.stringify(table(parseCode('function binarySearch(X, V, n){\nlet low, high, mid;\nlow = 0;\nhigh = n - 1;\nwhile (low <= high) {\nmid = (low + high)/2;\nif (X < V[mid])\nhigh = mid - 1;\nelse if (X > V[mid])\nlow = mid + 1;\nelse\nreturn mid;\n}\nreturn -1;\n}'))),
+            '[{"line":1,"type":"FunctionDeclaration","name":"binarySearch","condition":"","value":""},{"line":1,"type":"VariableDeclarator","name":"X","condition":"","value":""},{"line":1,"type":"VariableDeclarator","name":"V","condition":"","value":""},{"line":1,"type":"VariableDeclarator","name":"n","condition":"","value":""},{"line":2,"type":"VariableDeclarator","name":"low","condition":"",value":""},{"line":2,"type":"VariableDeclarator","name":"high","condition":"","value":""},{"line":2,"type":"VariableDeclarator","name":"mid","condition":"","value":""},{"line":3,"type":"AssignmentExpression","name":"low","condition":"","value":0},{"line":4,"type":"AssignmentExpression","name":"high","condition":"","value":"n-1"},{"line":5,"type":"WhileStatement","name":"","condition":"low<=high","value":""},{"line":6,"type":"AssignmentExpression","name":"mid","condition":"","value":"(low+high)/2"},{"line":7,"type":"IfStatement","name":"","condition":"X<V[mid]","value":""},{"line":8,"type":"AssignmentExpression","name":"high","condition":"","value":"mid-1"},{"line":9,"type":"else IfStatement","name":"","condition":"X>V[mid]","value":""},{"line":10,"type":"AssignmentExpression","name":"low","condition":"","value":"mid+1"},{"line":11,"type":"else statement","name":"","condition":"","value":""},{"line":12,"type":"ReturnStatement","name":"","condition":"","value":"mid"},{"line":14,"type":"ReturnStatement","name":"","condition":"","value":"-1"}]'
+        );
+    });
+
+});
+*/
+
+
 
 /*
 it('is parsing multiple variable declarations correctly', () => {

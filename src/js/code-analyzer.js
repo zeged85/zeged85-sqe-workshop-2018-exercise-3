@@ -95,6 +95,17 @@ function addExpression(node){
     addStatement(node.expression);
 }
 
+function addUpdateExpression(node){
+    let arg = getStatement(node.argument);
+    if (node.prefix===false){
+        appendObject(node.loc.start.line,node.type,arg,'',arg + node.operator);
+    }
+    else{
+        appendObject(node.loc.start.line,node.type,arg,'',node.operator+arg);
+    }
+
+}
+
 
 function addStatement(node){
 
@@ -109,6 +120,7 @@ function addStatement(node){
         'FunctionDeclaration' : addFunctionDeclaration,
         'WhileStatement' : addWhileStatement,
         'ForStatement' : addForStatement,
+        'UpdateExpression' : addUpdateExpression
     };
 
     choices[node.type](node);
