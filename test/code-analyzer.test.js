@@ -70,6 +70,16 @@ describe('Code-Analyzer - if statements', () => {
 });
 
 
+describe('Code-Analyzer - for loops', () => {
+    it('it is testing a simple for loop', () => {
+        assert.equal(
+            JSON.stringify(table(parseCode('for (var x=3, y=2; y<=5; x++){\nx=1;\n}'))),
+            '[{"line":1,"type":"ForStatement","name":"","condition":"x=3,y=2;y<=5;x++","value":""},{"line":2,"type":"AssignmentExpression","name":"x","condition":"","value":1}]'
+        );
+    });
+});
+
+
 
 /*
 describe('Code-Analyzer2', () =>{
