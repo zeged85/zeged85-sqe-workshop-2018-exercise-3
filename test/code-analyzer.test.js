@@ -61,6 +61,14 @@ describe('Code-Analyzer - functions', () =>{
 
 
 describe('Code-Analyzer - if statements', () => {
+
+    it('it is testing a simple if statement', () => {
+        assert.equal(
+            JSON.stringify(table(parseCode('if (x===true){\nx=false;\n}'))),
+            '[{"line":1,"type":"IfStatement","name":"","condition":"x===true","value":""},{"line":2,"type":"AssignmentExpression","name":"x","condition":"","value":false}]'
+        );
+    });
+
     it('it is testing if elseif else', () => {
         assert.equal(
             JSON.stringify(table(parseCode('if (X < V[mid])\nhigh = mid - 1;\nelse if (X > V[mid])\nlow = mid + 1;\nelse\nmid=3;'))),
@@ -77,7 +85,30 @@ describe('Code-Analyzer - for loops', () => {
             '[{"line":1,"type":"ForStatement","name":"","condition":"x=3,y=2;y<=5;x++","value":""},{"line":2,"type":"AssignmentExpression","name":"x","condition":"","value":1}]'
         );
     });
+
+
+    it('it is testing a loop w/ sequence and unaryexpression statement', () => {
+        assert.equal(
+            JSON.stringify(table(parseCode('for (x=3, y=2; y!=5; --x){\nx++;\n}'))),
+            '[{"line":1,"type":"ForStatement","name":"","condition":"x=3,y=2;y!=5;--x","value":""},{"line":2,"type":"UpdateExpression","name":"x","condition":"","value":"x++"}]'
+        );
+    });
+
 });
+
+
+
+
+describe('Code-Analyzer - while loops', () => {
+    it('it is testing a simple while loop', () => {
+        assert.equal(
+            JSON.stringify(table(parseCode('while (low <= high) {\nmid = (low + high)/2;\n}'))),
+            '[{"line":1,"type":"WhileStatement","name":"","condition":"low<=high","value":""},{"line":2,"type":"AssignmentExpression","name":"mid","condition":"","value":"(low+high)/2"}]'
+        );
+    });
+});
+
+
 
 
 

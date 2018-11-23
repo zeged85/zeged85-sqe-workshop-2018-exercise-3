@@ -106,6 +106,12 @@ function addUpdateExpression(node){
 
 }
 
+function addBlockStatement(node){
+    for (var statement in node.body){
+        addStatement(node.body[statement]);
+    }
+}
+
 
 function addStatement(node){
 
@@ -120,7 +126,8 @@ function addStatement(node){
         'FunctionDeclaration' : addFunctionDeclaration,
         'WhileStatement' : addWhileStatement,
         'ForStatement' : addForStatement,
-        'UpdateExpression' : addUpdateExpression
+        'UpdateExpression' : addUpdateExpression,
+        'BlockStatement' : addBlockStatement
     };
 
     choices[node.type](node);
