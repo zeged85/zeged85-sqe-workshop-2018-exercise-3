@@ -95,12 +95,13 @@ function addExpression(node){
     addStatement(node.expression);
 }
 
+
 function addStatement(node){
 
 
     var choices = {
         'ExpressionStatement' : addExpression,
-        'ReturnStatement' : addExpression,
+        'ReturnStatement' : addReturnStatement,
         'AssignmentExpression' : addAssignmentExpression,
         'VariableDeclaration' : addVariableDeclaration,
         'VariableDeclarator' : addVariableDeclarator,
@@ -112,59 +113,6 @@ function addStatement(node){
 
     choices[node.type](node);
 
-
-/*
-    if (node.type === 'ExpressionStatement') {
-        addStatement(node.expression);
-        return;
-    }
-
-    if (node.type === 'ReturnStatement') {
-        addReturnStatement(node);
-        return;
-    }
-
-
-
-    if (node.type==='AssignmentExpression'){
-        addAssignmentExpression(node);
-        return;
-    }
-
-
-    if (node.type==='VariableDeclaration'){
-        addVariableDeclaration(node);
-        return;
-    }
-
-    if (node.type==='VariableDeclarator'){
-
-        addVariableDeclarator(node);
-        return;
-    }
-
-    if (node.type==='IfStatement'){
-        addIfStatement(node);
-        return;
-    }
-
-    if (node.type==='FunctionDeclaration'){
-        addFunctionDeclaration(node);
-        return;
-    }
-
-
-    if (node.type==='WhileStatement'){
-        addWhileStatement(node);
-        return;
-    }
-
-    if (node.type==='ForStatement'){
-        addForStatement(node);
-        return;
-    }
-
-*/
 }
 
 function getLiteral(node){
@@ -221,20 +169,27 @@ function getUnaryExpression(node){
     return node.operator + getStatement(node.argument);
 }
 
-function getBinaryExpression(node){
-    var left = getStatement(node.left);
-    var right = getStatement(node.right);
+function fixBrackets(node){
+    if (node.type==='BinaryExpression' && (node.operator==='+' || node.operator==='-')){
+        return true;
+    }
+    return false;
+}
 
+function getBinaryExpression(node){
+    let left = getStatement(node.left);
+    let right = getStatement(node.right);
+
+    //(1+2)*3
     if (node.operator==='*' || node.operator==='/') {
-        if (node.left.type==='BinaryExpression' && (node.left.operator=='+' || node.left.operator=='-')){
+        if (fixBrackets(node.left)){
             left = '(' + left + ')';
         }
-        if (node.right.type==='BinaryExpression' && (node.right.operator=='+' || node.right.operator=='-')){
+        if (fixBrackets(node.right)){
             right = '(' + right + ')';
         }
     }
     return left + node.operator + right;
-
 }
 
 function getUpdateExpression(node){
@@ -255,150 +210,24 @@ function getStatement(node){
     if (node===null){
         return '';
     }
-
-    if (node.type==='Literal'){
-        return getLiteral(node);
-    }
-    if (node.type==='Identifier'){
-        return getIdentifier(node);
-    }
-
-    if (node.type==='VariableDeclaration'){
-        return getVariableDeclaration(node);
-    }
-
-
-    if (node.type==='SequenceExpression'){
-        return getSequenceExpression(node);
-    }
-
-
-    if (node.type==='VariableDeclarator'){
-        return getVariableDeclarator(node);
-    }
-
-    if (node.type==='MemberExpression'){
-        return getMemberExpression(node);
-    }
-
-    if (node.type==='UnaryExpression'){
-        return getUnaryExpression(node);
-    }
-
-    if (node.type==='BinaryExpression'){
-        return getBinaryExpression(node);
-    }
-
-    if (node.type==='UpdateExpression'){
-        return getUpdateExpression(node);
-    }
-
-    if (node.type==='AssignmentExpression'){
-        return getAssignmentExpression(node);
-    }
-
-
-    return '';
+    var choices = {
+        'Literal' : getLiteral,
+        'Identifier' : getIdentifier,
+        'VariableDeclaration' : getVariableDeclaration,
+        'VariableDeclarator' : getVariableDeclarator,
+        'SequenceExpression' : getSequenceExpression,
+        'getVariableDeclarator' : getMemberExpression,
+        'MemberExpression' : getMemberExpression,
+        'UnaryExpression' : getUnaryExpression,
+        'BinaryExpression' : getBinaryExpression,
+        'UpdateExpression' : getUpdateExpression,
+        'AssignmentExpression' : getAssignmentExpression
+    };
+    return choices[node.type](node);
 }
 
 
-/*
-function morph(node){
-    if (node.type===undefined){
 
-    }
-    node.type==='Program' ? console.log('program')
-        :node.type==='FunctionDeclaration' ? console.log('function: '
-        + node.id.name + ' params: ' + node.params.length)
-            :node.type=== 'Identifier' ? console.log( node.name)
-                :node.type=== 'Literal' ? console.log( node.value)
-                    :node.type==='operator' ? console.log('operator:' )
-                        :node.type==='VariableDeclaration' ? console.log('VariableDeclaration')
-                            :node.type==='BlockStatement'  ? console.log('BlockStatement')
-                                :node.type==='VariableDeclarator' ? console.log('VariableDeclarator')
-                                    :node.type==='ExpressionStatement' ? console.log('ExpressionStatement')
-                                        :node.type==='AssignmentExpression' ? console.log('AssignmentExpression')
-                                            : console.log('else:' + node);
-
-
-
-
-    if (node.type==="Identifier"){
-        console.log(node.name)
-    }
-    if (node.type==="Literal"){
-        console.log(node.value)
-    }
-
-    return "else";
-}*/
-
-/*
-function analyzeCode(code) {
-    var ast = code;
-    traverse(ast, function(node) {
-        if (node.type === undefined){
-            //  console.log("undefined:"+ node)
-        }
-        else {
-
-
-            // console.log(node.loc)
-            console.log(getToken(node));
-        }
-    });
-}*/
-
-/*
-function traverse(node, func) {
-    if (node.type !== undefined){
-        func(node);//1
-
-        //console.log(node.loc)
-    }
-
-    for (var key in node) { //2
-        if (node.hasOwnProperty(key)) { //3
-            var child = node[key];
-            if (typeof child === 'object' && child !== null) { //4
-
-                if (Array.isArray(child)) {
-                    child.forEach(function(node) { //5
-                        console.log('->');
-                        traverse(node, func);
-                    });
-                } else {
-                    traverse(child, func); //6
-                }
-            }
-        }
-    }
-}*/
-
-///enums?
-/*
-
-Identifier->Name
-Literal->Value
-
-VariableDeclaration->declarations
-
-
-FunctionDeclaration
-
-
-ExpressionStatement
-VariableDeclaration
-
-WhileStatement
-If
-else
-return
-
-for
-
-
- */
 
 function iterateStatements(root){
 
@@ -417,10 +246,13 @@ const table = (parsedCode)=>{
     var ans = [];
     for (var statement in list){
         ans.push(list[statement]);
-        console.log(list[statement]);
+        //console.log(list[statement]);
     }
 
+    // console.log("ans length:"+ans.length);
     //console.log(parsedCode);
+
+    list = [];
     return ans;
 };
 
