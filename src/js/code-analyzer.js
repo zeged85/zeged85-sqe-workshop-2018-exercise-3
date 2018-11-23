@@ -189,10 +189,8 @@ function getUnaryExpression(node){
 }
 
 function fixBrackets(node){
-    if (node.type==='BinaryExpression' && (node.operator==='+' || node.operator==='-')){
-        return true;
-    }
-    return false;
+    return node.type === 'BinaryExpression' && (node.operator === '+' || node.operator === '-');
+
 }
 
 function getBinaryExpression(node){

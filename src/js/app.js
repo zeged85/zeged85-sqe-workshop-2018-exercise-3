@@ -22,10 +22,10 @@ $(document).ready(function () {
 });
 
 function makeTableHTML(myArray) {
-    var result = '<table border=1>';
-    for(var i=0; i<myArray.length; i++) {
+    let result = '<table border=1>';
+    for(let i=0; i<myArray.length; i++) {
         result += '<tr>';
-        for(var j=0; j<myArray[i].length; j++){
+        for(let j=0; j<myArray[i].length; j++){
             result += '<td>'+myArray[i][j]+'</td>';
         }
         result += '</tr>';
@@ -37,12 +37,12 @@ function makeTableHTML(myArray) {
 
 function fillTableData(table,data){
     let i = 0;
-    for (var x in data){
+    for (let x in data){
         i++;
-        var row = table.insertRow(i);
+        let row = table.insertRow(i);
         let j = 0;
-        for (var y in data[x]){
-            var cell1 = row.insertCell(j);
+        for (let y in data[x]){
+            let cell1 = row.insertCell(j);
             j++;
             cell1.innerHTML = data[x][y];
         }
