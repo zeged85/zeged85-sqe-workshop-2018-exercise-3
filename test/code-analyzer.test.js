@@ -50,12 +50,24 @@ describe('Code-Analyzer - functions', () =>{
     });
 
 
-
+    it('it is testing function return', () => {
+        assert.equal(
+            JSON.stringify(table(parseCode('function binarySearch(X, V, n){\nreturn x[5];\n}'))),
+            '[{"line":1,"type":"FunctionDeclaration","name":"binarySearch","condition":"","value":""},{"line":1,"type":"VariableDeclarator","name":"X","condition":"","value":""},{"line":1,"type":"VariableDeclarator","name":"V","condition":"","value":""},{"line":1,"type":"VariableDeclarator","name":"n","condition":"","value":""},{"line":2,"type":"ReturnStatement","name":"","condition":"","value":"x[5]"}]'
+        );
+    });
 
 });
 
 
-
+describe('Code-Analyzer - if statements', () => {
+    it('it is testing if elseif else', () => {
+        assert.equal(
+            JSON.stringify(table(parseCode('if (X < V[mid])\nhigh = mid - 1;\nelse if (X > V[mid])\nlow = mid + 1;\nelse\nmid=3;'))),
+            '[{"line":1,"type":"IfStatement","name":"","condition":"X<V[mid]","value":""},{"line":2,"type":"AssignmentExpression","name":"high","condition":"","value":"mid-1"},{"line":3,"type":"else IfStatement","name":"","condition":"X>V[mid]","value":""},{"line":4,"type":"AssignmentExpression","name":"low","condition":"","value":"mid+1"},{"line":5,"type":"else statement","name":"","condition":"","value":""},{"line":6,"type":"AssignmentExpression","name":"mid","condition":"","value":3}]'
+        );
+    });
+});
 
 
 
