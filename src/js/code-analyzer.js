@@ -175,7 +175,7 @@ function addReturnStatement(node){
 function addAssignmentExpression(node){
     //updateVariable(getStatement(node.left),getStatement(node.right));
     //if (node.) is global or local
-    let left = node.left.name;
+    //let left = node.left.name;
     let right = getStatement(node.right);
 
     //appendObject(node.loc.start.line,node.type,left,'',evalNew(right));
@@ -250,17 +250,9 @@ function addIfStatement(node){
 
     let test = evalNew(node.test);
 
-
-
-    let globalStr = '';
     for (let num in globalParams) {
-
-        globalStr +=  Object.keys(globalList)[num] + '=' +evalNew(globalParams[num]) + ';\n';
         test = test.replace(Object.keys(globalList)[num], evalNew(globalParams[num]));
     }
-
-
-
 
 
     let res = 'notActive';
@@ -268,28 +260,17 @@ function addIfStatement(node){
     if (activeRun) {
         if (eval(test) === true) {
             res = 'true';
-
-
         }
         else{
             res = 'false';
-
         }
     }
     else{
-
         res = 'notActive';
     }
 
 
-    ifStatements.push(res)
-
-
-
-
-
-
-
+    ifStatements.push(res);
 
 
     let tmpLocalList = deepcopy(localList);
@@ -335,7 +316,6 @@ function addIfStatement(node){
 }
 
 function addFunctionDeclaration(node){
-
     if (node.params.length ===globalParams.length){
 
         haveArgs = true;
@@ -344,31 +324,15 @@ function addFunctionDeclaration(node){
 
         activeRun = false;
     }
-
     appendObject(node.loc.start.line,node.type,node.id.name,'','');
-
     //push params
     for (let param in node.params){
-        //addVariable(getStatement(node.params[param]), '','global');
         globalList[node.params[param].name]=getStatement(node.params[param]);
         appendObject(node.loc.start.line,'VariableDeclarator',getStatement(node.params[param]),'','');
     }
-
     //all var declerations are local
     inFunction = true;
-
-
-
-    //push function body
-
     node.body = iterateStatements(node.body);
-
-    /*
-    for (let statement in node.body.body) {
-        addStatement(node.body.body[statement]);
-    }
-    */
-
     return true;
 }
 
