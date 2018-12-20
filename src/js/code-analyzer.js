@@ -44,6 +44,19 @@ function iterateStatements(root){
 }
 
 
+function addWhileStatement(node){
+    appendObject(node.loc.start.line,node.type,'',getStatement(node.test),'');
+   // for (var i = 0; i< node.body.)
+
+    iterateStatements(node.body);
+
+    /*
+    for (let statement in node.body.body){
+        addStatement(node.body.body[statement]);
+    }
+    */
+}
+
 
 function addBlockStatement(node){
     for (let statement in node.body){
@@ -211,7 +224,7 @@ function addAssignmentExpression(node){
 
     appendObject(node.loc.start.line,node.type,left,'',evalNew(right));
 
-    if (inFunction){
+    if (!inFunction){
        // console.log(globalList[node.left.name]);
         if (globalList[node.left.name]!=null){
             globalList[node.left.name] = right;
@@ -220,10 +233,21 @@ function addAssignmentExpression(node){
         else{
             localList[node.left.name] = right;
         }
+        return true;
 
     }
+    else{
+        if (localList[node.left.name]!=null){
+            localList[node.left.name] = right;
+            return false;
+        }
+        else{
+            globalList[node.left.name] = right;
+            return true;
+        }
+    }
 
-    return !inFunction;
+  //  return !inFunction;
 }
 
 function addVariableDeclaration(node){
@@ -424,12 +448,7 @@ function addFunctionDeclaration(node){
 
 
 
-function addWhileStatement(node){
-    appendObject(node.loc.start.line,node.type,'',getStatement(node.test),'');
-    for (let statement in node.body.body){
-        addStatement(node.body.body[statement]);
-    }
-}
+
 
 
 function addForStatement(node){

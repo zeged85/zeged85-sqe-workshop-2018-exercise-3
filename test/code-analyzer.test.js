@@ -42,14 +42,14 @@ describe('Code-Analyzer - simple statements', () => {
     });
 
 
-    /*
-    it('it is analyzing a full function correctly 2', () => {
+
+    it('it is analyzing a while statement correctly 2', () => {
         assert.equal(
-            JSON.stringify(table(parseCode(''),parseCode('').body)),
-            '[\"function foo(x, y, z) {\\n    if (x > 0) {\\n        x = y + 5;\\n    }\\n}\",[\"true\"]]'
+            JSON.stringify(table(parseCode('function foo(x, y, z){\n    let a = x + 1;\n    let b = a + y;\n    let c = 0;\n    \n    while (a < z) {\n        c = a + b;\n        z = c * 2;\n    }\n    \n    return z;\n}\n'),parseCode('').body)),
+            '[\"function foo(x, y, z) {\\n    while (x + 1 < z) {\\n        z = (x + 1 + (x + 1 + y)) * 2;\\n    }\\n    return z;\\n}\",[]]'
         );
     });
-*/
+
 
 
     it('it is analyzing a full function correctly 2', () => {
