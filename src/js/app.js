@@ -1,21 +1,75 @@
 import $ from 'jquery';
-import {parseCode,table} from './code-analyzer';
+import {parseCode,table,coverage} from './code-analyzer';
+
+
+var escodegen = require('escodegen');
+var safeEval = require('safe-eval')
+
 
 $(document).ready(function () {
     $('#codeSubmissionButton').click(() => {
         let codeToParse = $('#codePlaceholder').val();
+        let argsToParse = $('#argumentsPlaceholder').val();
+        console.log(argsToParse);
+
+        let parsedArguments = parseCode(argsToParse);
+
+        console.log('input args length:' + parsedArguments.body[0].expression.expressions.length);
+
         let parsedCode = parseCode(codeToParse);
-        let str = table(parsedCode);
 
 
-        //$('#parsedCode').val(JSON.stringify(parsedCode, null, 2));
+        console.log(parsedCode);
+        console.log(parsedArguments);
+        let ifStatements = table(parsedCode,parsedArguments.body[0].expression.expressions);
 
+        console.log(escodegen.generate(parsedCode));
+        console.log(safeEval('(3+5)<3'));
+
+        //let cvr = coverage(str);
+
+        //console.log(cvr);
+
+        let textedCode = escodegen.generate(parsedCode);
+
+        console.log('ok code:')
+
+        console.log(textedCode);
+
+        let coloredCode = textedCode.split('\n');
+
+        let coloredHTML = '<br>'
+        let counter=0;
+        for (let line in coloredCode){
+            console.log(line)
+            console.log(coloredCode[line])
+            if (coloredCode[line].includes(' if ')){
+                if (ifStatements[counter]){
+                    console.log('true')
+                    coloredHTML += '<span style="background-color: #00FF00">' + coloredCode[line] + '</span><br>';
+                }
+                else {
+                    console.log(false);
+                    coloredHTML += '<span style="background-color: #FF0000">' + coloredCode[line] + '</span><br>';
+                }
+                counter++;
+            }
+            else {
+                coloredHTML += '<span>' + coloredCode[line] + '</span><br>';
+            }
+        }
+
+        console.log(coloredHTML);
+
+        $('#parsedCode').html(coloredHTML);
+/*
         let res = makeTableHTML(str);
         //console.log(res);
         let pageTable = document.getElementById('parsedTable');
         fillTableData(pageTable,str);
 
         $('#parsedTable').val(res);
+        */
 
 
     });
