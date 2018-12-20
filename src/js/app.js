@@ -23,7 +23,7 @@ $(document).ready(function () {
 
         console.log(parsedCode);
         console.log(parsedArguments);
-        let ifStatements = table(parsedCode,parsedArguments.body[0].expression.expressions);
+        let newCode, args, ifStatements = table(parsedCode,parsedArguments.body[0].expression.expressions);
 
         console.log(escodegen.generate(parsedCode));
         console.log(safeEval('(3+5)<3'));
@@ -46,13 +46,16 @@ $(document).ready(function () {
             console.log(line)
             console.log(coloredCode[line])
             if (coloredCode[line].includes(' if ')){
-                if (ifStatements[counter]){
+                if (ifStatements[counter]==='true'){
                     console.log('true')
                     coloredHTML += '<span style="background-color: #00FF00">' + coloredCode[line] + '</span><br>';
                 }
-                else {
+                else if (ifStatements[counter]==='false'){
                     console.log(false);
                     coloredHTML += '<span style="background-color: #FF0000">' + coloredCode[line] + '</span><br>';
+                }
+                else{
+                    coloredHTML += '<span>' + coloredCode[line] + '</span><br>';
                 }
                 counter++;
             }

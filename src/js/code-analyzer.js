@@ -24,6 +24,8 @@ let globalParams = [];
 
 let ifStatements = [];
 
+let activeRun = true;
+
 
 
 function iterateStatements(root){
@@ -58,7 +60,7 @@ function evalNew(node){
 const table = (parsedCode, params)=>{
 
     globalParams = params;
-
+    ifStatements = [];
 
     parsedCode = iterateStatements(parsedCode);
 
@@ -93,7 +95,7 @@ const table = (parsedCode, params)=>{
 
     console.log(evalNew(parsedCode))
 
-    return ifStatements;
+    return parsedCode, params, ifStatements;
 };
 
 
@@ -267,15 +269,26 @@ function addIfStatement(node){
     console.log(test)
 
     console.log(safeEval(test))
-    let res = false;
+    let res = 'notActive';
 
-    if (safeEval(test)===true){
-        res = true;
-        console.log('it is true');
+    if (activeRun) {
+        if (safeEval(test) === true) {
+            res = 'true';
+            console.log('it is true');
 
+        }
+        else{
+            res = 'false'
+            console.log('its not true')
+        }
+    }
+    else{
+        console.log('didnt reach')
+        res = 'notActive'
     }
 
-    ifStatements.push(res)
+
+        ifStatements.push(res)
 
     console.log(globalStr)
    // console.log(evalNew(globalParams +'\n' +node.test))
@@ -284,16 +297,39 @@ function addIfStatement(node){
     //eval
     //mark on node or on some list
 
-    if (haveArgs){
-        console.log('eval');
 
-    }
+
+
+
+
+
+
+
+
 
     let tmpLocalList = deepcopy(localList);
     let tmpGlobalList = deepcopy(globalList);
     addStatement(node.consequent);
     localList = deepcopy(tmpLocalList);
     globalList = deepcopy(tmpGlobalList);
+
+
+    let tmpActive = false;
+
+    if (haveArgs && activeRun){
+        console.log('eval');
+
+        if (res==='true'){
+
+            activeRun = false;
+            tmpActive = true;
+        }
+
+    }
+    else{
+        console.log('not active');
+    }
+
 
 
     if (node.alternate){
@@ -307,6 +343,12 @@ function addIfStatement(node){
         localList = deepcopy(tmpLocalList);
         globalList = deepcopy(tmpGlobalList);
     }
+
+
+    if (tmpActive){
+        activeRun = true;
+    }
+
     return true;
 }
 
