@@ -178,7 +178,7 @@ function addAssignmentExpression(node){
     let left = node.left.name;
     let right = getStatement(node.right);
 
-    appendObject(node.loc.start.line,node.type,left,'',evalNew(right));
+    //appendObject(node.loc.start.line,node.type,left,'',evalNew(right));
 
     if (!inFunction){
 
@@ -414,31 +414,14 @@ function getLiteral(node){
 }
 
 function getIdentifier(node){
-    let val;
+
     if (localList[node.name]!=null) {
         node = localList[node.name];
-        if (node.type==='Identifier'){
-            val = node.name;
-        }
-        else {
-            val = evalNew(node);
-        }
-
     }
     else if (globalList[node.name]!=null){
         node = globalList[node.name];
-        if (node.type === 'Identifier'){
-            val = node.name;
-        }
-        else{
-            val = evalNew(node);
-        }
+    }
 
-    }
-    else{
-        val =  node.name;
-    }
-    //node.name = val.toString();
     return node;
 }
 

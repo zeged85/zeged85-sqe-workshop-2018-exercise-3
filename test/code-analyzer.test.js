@@ -60,6 +60,34 @@ describe('Code-Analyzer - simple statements', () => {
     });
 
 
+
+
+    it('it is analyzing a example1', () => {
+        assert.equal(
+            JSON.stringify(table(parseCode('function foo(x, y, z){\n    let a = x + 1;\n    let b = a + y;\n    let c = 0;\n    \n    if (b < z) {\n        c = c + 5;\n        return x + y + z + c;\n    } else if (b < z * 2) {\n        c = c + x + 5;\n        return x + y + z + c;\n    } else {\n        c = c + z + 5;\n        return x + y + z + c;\n    }\n}\n'),parseCode('').body)),
+            '[\"function foo(x, y, z) {\\n    if (x + 1 + y < z) {\\n        return x + y + z + (0 + 5);\\n    } else if (x + 1 + y < z * 2) {\\n        return x + y + z + (0 + x + 5);\\n    } else {\\n        return x + y + z + (0 + z + 5);\\n    }\\n}\",[\"notActive\",\"notActive\"]]'
+        );
+    });
+
+
+
+    it('it is analyzing a array test', () => {
+        assert.equal(
+            JSON.stringify(table(parseCode('function foo(x, y, z){\n    let a = x + 1;\n    let b = a + y;\n    let c = 0;\n    \n    while (a < z) {\n     y = x[0]\n    }\n    \n    return y;\n}\n'),parseCode('[1,2,3],2,3').body)),
+            '[\"function foo(x, y, z) {\\n    while (x + 1 < z) {\\n        y = x[0];\\n    }\\n    return y;\\n}\",[]]'
+        );
+    });
+
+
+
+    it('it is analyzing various', () => {
+        assert.equal(
+            JSON.stringify(table(parseCode('function foo(x,y){\n    let a = x;\n\n    if (true) {\n     y = a[2]++;\n    }\n    return y;\n}\n'),parseCode('[true,\'hello\',0],2').body)),
+            '[\"function foo(x, y) {\\n    if (true) {\\n        y = a[2]++;\\n    }\\n    return y;\\n}\",[\"true\"]]'
+        );
+    });
+
+
 });
 
 
