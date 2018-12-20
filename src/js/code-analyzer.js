@@ -59,6 +59,11 @@ function evalNew(node){
 
 const table = (parsedCode, params)=>{
 
+
+
+
+
+
     if (params[0]) {
         globalParams = params[0].expression.expressions;
     }
@@ -271,11 +276,18 @@ function addIfStatement(node){
 
     console.log(test)
 
-    console.log(safeEval(test))
+
+    //console.log('safeEval')
+    //console.log(safeEval(test))
+
+
+    console.log('simple eval')
+    console.log(eval(test))
+
     let res = 'notActive';
 
     if (activeRun) {
-        if (safeEval(test) === true) {
+        if (eval(test) === true) {
             res = 'true';
             console.log('it is true');
 

@@ -13,7 +13,7 @@ describe('The javascript parser', () => {
 
     it('is parsing a simple variable declaration correctly', () => {
         assert.equal(
-            JSON.stringify(table(parseCode('let a = 1;'),parseCode(''))),
+            JSON.stringify(table(parseCode('let a = 1;'),parseCode('').body)),
             '["let a = 1;",[]]'
         );
     });
@@ -22,17 +22,27 @@ describe('The javascript parser', () => {
 
 });
 
-/*
+
 describe('Code-Analyzer - simple statements', () => {
 
+    /*
     it('it is analyzing an empty statement correctly', () => {
         assert.equal(
             JSON.stringify(table(parseCode(''))),
             '[]'
         );
     });
+*/
+
+    it('it is analyzing a full function correctly', () => {
+        assert.equal(
+            JSON.stringify(table(parseCode('function foo(x, y, z){\n    if (x > 0) {\n        x = y + 5;\n    } \n}\n'),parseCode('1,2,3').body)),
+            '[\"function foo(x, y, z) {\\n    if (x > 0) {\\n        x = y + 5;\\n    }\\n}\",[\"true\"]]'
+        );
+    });
 
 
+/*
     it('it is analyzing an unary expression correctly', () => {
         assert.equal(
             JSON.stringify(table(parseCode('x=-3', []))),
@@ -40,11 +50,11 @@ describe('Code-Analyzer - simple statements', () => {
         );
     });
 
-
+*/
 
 });
 
-*/
+
 
 /*
 
