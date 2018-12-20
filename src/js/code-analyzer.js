@@ -60,7 +60,21 @@ function evalNew(node){
 const table = (parsedCode, params)=>{
 
 
+    list = [];
 
+    localList = [];
+
+    globalList = [];
+
+    inFunction = false;
+
+    haveArgs = false;
+
+    globalParams = [];
+
+    ifStatements = [];
+
+    activeRun = true;
 
 
 

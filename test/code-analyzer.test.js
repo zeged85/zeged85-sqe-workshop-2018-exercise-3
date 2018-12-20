@@ -25,14 +25,14 @@ describe('The javascript parser', () => {
 
 describe('Code-Analyzer - simple statements', () => {
 
-    /*
+
     it('it is analyzing an empty statement correctly', () => {
         assert.equal(
-            JSON.stringify(table(parseCode(''))),
-            '[]'
+            JSON.stringify(table(parseCode(''),parseCode('').body)),
+            '[\"\",[]]'
         );
     });
-*/
+
 
     it('it is analyzing a full function correctly', () => {
         assert.equal(
@@ -42,15 +42,23 @@ describe('Code-Analyzer - simple statements', () => {
     });
 
 
-/*
-    it('it is analyzing an unary expression correctly', () => {
+    /*
+    it('it is analyzing a full function correctly 2', () => {
         assert.equal(
-            JSON.stringify(table(parseCode('x=-3', []))),
-            '[{"line":1,"type":"AssignmentExpression","name":"x","condition":"","value":"-3"}]'
+            JSON.stringify(table(parseCode(''),parseCode('').body)),
+            '[\"function foo(x, y, z) {\\n    if (x > 0) {\\n        x = y + 5;\\n    }\\n}\",[\"true\"]]'
+        );
+    });
+*/
+
+
+    it('it is analyzing a full function correctly 2', () => {
+        assert.equal(
+            JSON.stringify(table(parseCode('function foo(x, y, z){\n    let a = x + 1;\n    let b = a + y;\n    let c = 0;\n    \n    if (b < z) {\n        c = c + 5;\n        return x + y + z + c;\n    } \n}'),parseCode('1,2,3').body)),
+            '[\"function foo(x, y, z) {\\n    if (x + 1 + y < z) {\\n        return x + y + z + (0 + 5);\\n    }\\n}\",[\"false\"]]'
         );
     });
 
-*/
 
 });
 

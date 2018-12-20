@@ -3,7 +3,7 @@ import {parseCode,table,coverage} from './code-analyzer';
 
 
 var escodegen = require('escodegen');
-var safeEval = require('safe-eval')
+//var safeEval = require('safe-eval')
 
 //change test for travis
 
@@ -32,7 +32,7 @@ $(document).ready(function () {
         ifStatements = myRes[1];
 
         console.log(escodegen.generate(parsedCode));
-        console.log(safeEval('(3+5)<3'));
+        //console.log(safeEval('(3+5)<3'));
 
         //let cvr = coverage(str);
 
