@@ -95,28 +95,10 @@ const table = (parsedCode, params)=>{
     }
 
 
-
-
-    for (let ver in localList){
-        console.log('local: ' + ver + '='+ evalNew(localList[ver]));
-    }
-
-    for (let ver in globalList){
-        console.log('global: ' + ver + '='+ evalNew(globalList[ver]));
-    }
-
     list = [];
 
 
-    console.log('if statements size:' + ifStatements.length)
-    for (let x in ifStatements){
-        console.log(ifStatements[x]);
-    }
 
-
-    console.log('end product');
-
-    console.log(evalNew(parsedCode))
 
     return [evalNew(parsedCode), ifStatements];
 };
@@ -235,7 +217,7 @@ function addVariableDeclarator(node){
 
 
     if (inFunction){
-        //all variables decleration are local
+        //all variables decelerations are local
         //addVariable(getStatement(node.id), getStatement(node.init),'local');
         localList[node.id.name]=getStatement(node.init);
 
@@ -465,7 +447,7 @@ function getVariableDeclaration(node){
 
     let first = true;
 
-    for (var dec in node.declarations){
+    for (let dec in node.declarations){
         if (first) {
             str += getStatement(node.declarations[dec]);
             first=false;
@@ -507,26 +489,11 @@ function getUnaryExpression(node){
     return node;
 }
 
-function fixBrackets(node){
-    return node.type === 'BinaryExpression' && (node.operator === '+' || node.operator === '-');
-
-}
 
 function getBinaryExpression(node){
     let left = getStatement(node.left);
     let right = getStatement(node.right);
 
-    //(1+2)*3
-    /*
-    if (node.operator==='*' || node.operator==='/') {
-        if (fixBrackets(node.left)){
-            left = '(' + left + ')';
-        }
-        if (fixBrackets(node.right)){
-            right = '(' + right + ')';
-        }
-    }
-    */
     node.left = left;
     node.right = right;
     return node;
@@ -549,45 +516,4 @@ function getAssignmentExpression(node){
 
 
 
-
-
-
-
-
-
-const coverage = (table)=>{
-
-    let ans = [];
-
-    let args = [];
-
-    let locals = [];
-
-    for (let row in table){
-        if (table[row].type==='FunctionDeclaration'){
-            console.log('one function');
-        }
-        if (table[row].type==='VariableDeclarator'){
-            console.log('VariableDeclarator');
-            if (table[row].line===1) {
-                args.push(table[row]);
-            }
-            else{
-                locals.push(table[row]);
-            }
-        }
-
-        ans.push(table[row]);
-    }
-/*
-    for (let ver in locals){
-        console.log('local: ' + locals[ver].name);
-    }
-    */
-
-    return ans;
-
-}
-
-
-export {parseCode,table,coverage};
+export {parseCode,table};

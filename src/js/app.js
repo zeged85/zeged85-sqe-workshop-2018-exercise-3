@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import {parseCode,table,coverage} from './code-analyzer';
+import {parseCode,table} from './code-analyzer';
 
 
 var escodegen = require('escodegen');
@@ -32,11 +32,7 @@ $(document).ready(function () {
         ifStatements = myRes[1];
 
         console.log(escodegen.generate(parsedCode));
-        //console.log(safeEval('(3+5)<3'));
 
-        //let cvr = coverage(str);
-
-        //console.log(cvr);
 
         //let textedCode = escodegen.generate(parsedCode);
 
