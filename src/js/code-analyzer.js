@@ -1,7 +1,7 @@
 import * as esprima from 'esprima';
 
 var escodegen = require('escodegen');
-var safeEval = require('safe-eval')
+
 
 
 
@@ -35,7 +35,6 @@ function iterateStatements(root){
     //var l = root.body.length;
     for(var i = 0; i < root.body.length; i++){
         if (addStatement(root.body[i])===false){
-            console.log('false');
             root.body.splice(i, 1);
             i--;
         }
@@ -46,23 +45,13 @@ function iterateStatements(root){
 
 function addWhileStatement(node){
     appendObject(node.loc.start.line,node.type,'',getStatement(node.test),'');
-   // for (var i = 0; i< node.body.)
 
     iterateStatements(node.body);
 
-    /*
-    for (let statement in node.body.body){
-        addStatement(node.body.body[statement]);
-    }
-    */
+
 }
 
 
-function addBlockStatement(node){
-    for (let statement in node.body){
-        addStatement(node.body[statement]);
-    }
-}
 
 
 function evalNew(node){
@@ -105,8 +94,7 @@ const table = (parsedCode, params)=>{
         //console.log(list[statement]);
     }
 
-    // console.log("ans length:"+ans.length);
-    console.log(parsedCode);
+
 
 
     for (let ver in localList){
@@ -135,18 +123,7 @@ const table = (parsedCode, params)=>{
 
 
 
-function addVariable(id,value,type){
-    /*const obj = {
-        id : id,
-        value : value,
-        type : type
-    };
-    varList.push(obj);
-*/
-    console.log('added:'+type +' '+id+'='+value);
-  //  varList[id]=value;
 
-}
 
 function appendObject(line,type,name,condition,value) {
     const obj = {
@@ -159,9 +136,6 @@ function appendObject(line,type,name,condition,value) {
     list.push(obj);
 }
 
-function updateVariable(id,newValue){
-    //varList[id]=newValue;
-}
 
 
 function addStatement(node){
@@ -225,7 +199,7 @@ function addAssignmentExpression(node){
     appendObject(node.loc.start.line,node.type,left,'',evalNew(right));
 
     if (!inFunction){
-       // console.log(globalList[node.left.name]);
+
         if (globalList[node.left.name]!=null){
             globalList[node.left.name] = right;
             return true;
@@ -247,7 +221,7 @@ function addAssignmentExpression(node){
         }
     }
 
-  //  return !inFunction;
+
 }
 
 function addVariableDeclaration(node){
@@ -264,7 +238,7 @@ function addVariableDeclarator(node){
         //all variables decleration are local
         //addVariable(getStatement(node.id), getStatement(node.init),'local');
         localList[node.id.name]=getStatement(node.init);
-        console.log('return false. local var');
+
         return false;
     }
     else{
@@ -292,65 +266,41 @@ function addIfStatement(node){
     appendObject(node.loc.start.line,type,'',getStatement(node.test),'');
 
 
-    console.log('test:')
-    console.log(node.test)
-    console.log(getStatement(node.test))
-    console.log(evalNew(node.test));
-
     let test = evalNew(node.test);
 
-    console.log(globalParams)
 
-    console.log(globalList)
 
-    console.log(Object.keys(globalList))
-
-    let globalStr = "";
+    let globalStr = '';
     for (let num in globalParams) {
-        console.log(num);
-       globalStr +=  Object.keys(globalList)[num] + '=' +evalNew(globalParams[num]) + ';\n';
+
+        globalStr +=  Object.keys(globalList)[num] + '=' +evalNew(globalParams[num]) + ';\n';
         test = test.replace(Object.keys(globalList)[num], evalNew(globalParams[num]));
     }
 
-    console.log(test)
 
 
-    //console.log('safeEval')
-    //console.log(safeEval(test))
 
-
-    console.log('simple eval')
-    console.log(eval(test))
 
     let res = 'notActive';
 
     if (activeRun) {
         if (eval(test) === true) {
             res = 'true';
-            console.log('it is true');
+
 
         }
         else{
-            res = 'false'
-            console.log('its not true')
+            res = 'false';
+
         }
     }
     else{
-        console.log('didnt reach')
-        res = 'notActive'
+
+        res = 'notActive';
     }
 
 
-        ifStatements.push(res)
-
-    console.log(globalStr)
-   // console.log(evalNew(globalParams +'\n' +node.test))
-
-    //if args length or bool check eval
-    //eval
-    //mark on node or on some list
-
-
+    ifStatements.push(res)
 
 
 
@@ -370,7 +320,6 @@ function addIfStatement(node){
     let tmpActive = false;
 
     if (haveArgs && activeRun){
-        console.log('eval');
 
         if (res==='true'){
 
@@ -379,9 +328,7 @@ function addIfStatement(node){
         }
 
     }
-    else{
-        console.log('not active');
-    }
+
 
 
 
@@ -408,13 +355,11 @@ function addIfStatement(node){
 function addFunctionDeclaration(node){
 
     if (node.params.length ===globalParams.length){
-        console.log('same size');
+
         haveArgs = true;
     }
     else{
-        console.log('somethings wrong');
-        console.log(node.params.length);
-        console.log(globalParams.length);
+
         activeRun = false;
     }
 
