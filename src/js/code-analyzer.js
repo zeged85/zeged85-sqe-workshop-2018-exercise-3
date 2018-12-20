@@ -59,7 +59,10 @@ function evalNew(node){
 
 const table = (parsedCode, params)=>{
 
-    globalParams = params;
+    if (params[0]) {
+        globalParams = params[0].expression.expressions;
+    }
+
     ifStatements = [];
 
     parsedCode = iterateStatements(parsedCode);
@@ -95,7 +98,7 @@ const table = (parsedCode, params)=>{
 
     console.log(evalNew(parsedCode))
 
-    return parsedCode, params, ifStatements;
+    return [evalNew(parsedCode), ifStatements];
 };
 
 
@@ -362,6 +365,7 @@ function addFunctionDeclaration(node){
         console.log('somethings wrong');
         console.log(node.params.length);
         console.log(globalParams.length);
+        activeRun = false;
     }
 
     appendObject(node.loc.start.line,node.type,node.id.name,'','');

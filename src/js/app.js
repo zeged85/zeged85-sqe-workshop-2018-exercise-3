@@ -15,15 +15,21 @@ $(document).ready(function () {
         console.log(argsToParse);
 
         let parsedArguments = parseCode(argsToParse);
+        if (parsedArguments.body[0]){
+            console.log('we have args');
+            console.log('input args length:' + parsedArguments.body[0].expression.expressions.length);
+        }
 
-        console.log('input args length:' + parsedArguments.body[0].expression.expressions.length);
 
         let parsedCode = parseCode(codeToParse);
 
 
         console.log(parsedCode);
         console.log(parsedArguments);
-        let newCode, args, ifStatements = table(parsedCode,parsedArguments.body[0].expression.expressions);
+        let textedCode, ifStatements
+        let myRes    = table(parsedCode,parsedArguments.body);
+        textedCode = myRes[0];
+        ifStatements = myRes[1];
 
         console.log(escodegen.generate(parsedCode));
         console.log(safeEval('(3+5)<3'));
@@ -32,7 +38,7 @@ $(document).ready(function () {
 
         //console.log(cvr);
 
-        let textedCode = escodegen.generate(parsedCode);
+        //let textedCode = escodegen.generate(parsedCode);
 
         console.log('ok code:')
 
