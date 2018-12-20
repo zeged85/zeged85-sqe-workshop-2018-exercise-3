@@ -13,7 +13,7 @@ $(document).ready(function () {
         let codeToParse = $('#codePlaceholder').val();
         let argsToParse = $('#argumentsPlaceholder').val();
         console.log(argsToParse);
-
+        //one before linting
         let parsedArguments = parseCode(argsToParse);
         if (parsedArguments.body[0]){
             console.log('we have args');
