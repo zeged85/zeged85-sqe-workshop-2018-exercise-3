@@ -88,6 +88,15 @@ describe('Code-Analyzer - simple statements', () => {
     });
 
 
+
+    it('it is analyzing an array statement correctly', () => {
+        assert.equal(
+            JSON.stringify(table(parseCode('function foo(x,y){\n    let a = x;\n\n    if (true) {\n     x[0] = x[2]++;\n    }\n    return y;\n}\n'),parseCode('[1,2,3],2').body)),
+            '[\"function foo(x, y) {\\n    if (true) {\\n        x[0] = x[2]++;\\n    }\\n    return y;\\n}\",[\"true\"]]'
+        );
+    });
+
+
 });
 
 
