@@ -22,11 +22,15 @@
     "license": "ISC",
     "dependencies": {
         "escodegen": "^1.11.0",
+        "esgraph": "^0.3.0",
         "esprima": "^4.0.1",
         "eval": "^0.1.2",
+        "flowchart.js": "^1.11.3",
+        "graphviz": "0.0.8",
         "jquery": "^3.3.1",
         "node-eval": "^2.0.0",
-        "safe-eval": "^0.4.1"
+        "safe-eval": "^0.4.1",
+        "viz.js": "^1.8.1"
     },
     "devDependencies": {
         "cross-env": "^5.2.0",

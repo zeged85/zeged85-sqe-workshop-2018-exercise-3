@@ -7,6 +7,7 @@ var escodegen = require('escodegen');
 
 
 const parseCode = (codeToParse) => {
+    console.log('in parse');
     return esprima.parseScript(codeToParse,{loc:true});
 };
 
@@ -26,6 +27,7 @@ let ifStatements = [];
 
 let activeRun = true;
 
+let firstNode = true;
 
 
 function iterateStatements(root){
@@ -35,21 +37,41 @@ function iterateStatements(root){
     //var l = root.body.length;
     for(var i = 0; i < root.body.length; i++){
         if (addStatement(root.body[i])===false){
+            //append value to first node
+            //console.log('appending:')
+            //console.log(root.body[i-1].expression)
+            //console.log(root.body[i].expression);
+            //console.log('root.body[i-1].value = '+ root.body[i-1].expression.value + '+' + root.body[i].expression.value);
+
+            let value;
+
+            if (root.body[i].expression){
+                value = root.body[i].expression.value;
+            }
+            else{
+                value = root.body[i].value;
+            }
+
+            console.log(value);
+
+            if (root.body[i-1].expression) {
+                root.body[i - 1].expression.value += '\n' + value;
+            }
+            else{
+                root.body[i - 1].value += value;
+            }
+
+            //remove from list
             root.body.splice(i, 1);
             i--;
+
         }
     }
     return root;
 }
 
 
-function addWhileStatement(node){
-    appendObject(node.loc.start.line,node.type,'',getStatement(node.test),'');
 
-    iterateStatements(node.body);
-
-
-}
 
 
 
@@ -136,6 +158,7 @@ function addStatement(node){
         'UpdateExpression' : addUpdateExpression,
         'BlockStatement' : iterateStatements
     };
+    node.active = activeRun;
 
     return choices[node.type](node);
 
@@ -167,7 +190,8 @@ function getStatement(node){
 
 
 function addReturnStatement(node){
-    appendObject(node.loc.start.line,node.type,'','',getStatement(node.argument));
+    //appendObject(node.loc.start.line,node.type,'','',getStatement(node.argument));
+    node.value = 'return ' +  escodegen.generate(node.argument);
     return true;
 }
 
@@ -176,61 +200,85 @@ function addAssignmentExpression(node){
     //updateVariable(getStatement(node.left),getStatement(node.right));
     //if (node.) is global or local
     //let left = node.left.name;
+
+    node.value = node.left.name + '=' + escodegen.generate(node.right);
+
+
+    let left = node.left.name;
     let right = getStatement(node.right);
 
     //appendObject(node.loc.start.line,node.type,left,'',evalNew(right));
 
-    if (!inFunction){
 
-        if (globalList[node.left.name]!=null){
-            globalList[node.left.name] = right;
-            return true;
-        }
-        else{
-            localList[node.left.name] = right;
-        }
-        return true;
 
+
+
+    if (globalList[left]!=null){
+        globalList[left] = right;
     }
     else{
-        if (localList[node.left.name]!=null){
-            localList[node.left.name] = right;
-            return false;
-        }
-        else{
-            globalList[node.left.name] = right;
-            return true;
-        }
+        localList[left] = right;
+    }
+
+
+    if (firstNode){
+        firstNode = false;
+        return true;
+    }
+    else{
+        return false;
     }
 
 
 }
 
 function addVariableDeclaration(node){
+
+    node.value = '';
+
+    let ans;
     for (let dec in node.declarations){
-        addStatement(node.declarations[dec]);
+
+        ans = addStatement(node.declarations[dec]);
+        node.value += node.declarations[dec].value + '\n';
+
     }
-    return !inFunction;
+
+    /*
+    if (firstNode){
+        firstNode = false;
+        return true;
+    }
+    else{
+        return false;
+    }
+    */
+
+    return ans;
 }
+
+
 
 function addVariableDeclarator(node){
 
+    node.value = node.id.name + '=' + escodegen.generate(node.init);
 
-    if (inFunction){
-        //all variables decelerations are local
-        //addVariable(getStatement(node.id), getStatement(node.init),'local');
-        localList[node.id.name]=getStatement(node.init);
+    let left = node.id.name;
+    let right = getStatement(node.init);
 
-        return false;
+    //node.value = left + '=' + escodegen.generate(node.init);
+
+
+    localList[left]=right;
+
+
+    if (firstNode){
+        firstNode = false;
+        return true;
     }
     else{
-        //global
-        //addVariable(getStatement(node.id), getStatement(node.init),'global');
-
-        appendObject(node.loc.start.line,node.type,getStatement(node.id),'',evalNew(getStatement(node.init)));
-        globalList[node.id.name]=getStatement(node.init);
+        return false;
     }
-    return true;
 
 }
 
@@ -242,13 +290,70 @@ function deepcopy(list){
     return tmpList;
 }
 
+
+function addWhileStatement(node){
+    //appendObject(node.loc.start.line,node.type,'',getStatement(node.test),'');
+
+    node.test.value = escodegen.generate(node.test);
+
+    firstNode = true;
+
+    console.log('in while')
+    console.log(activeRun);
+
+    let tmpActive = false;
+
+    if (activeRun){
+        let test = evalNew(getStatement(node.test));
+
+        for (let num in globalParams) {
+            test = test.replace(Object.keys(globalList)[num], evalNew(globalParams[num]));
+        }
+
+        console.log(test);
+
+
+
+        if (eval(test) === false) {
+            activeRun = false;
+            tmpActive = true;
+            ifStatements.push('false');
+        }
+        else{
+            ifStatements.push('true');
+        }
+
+    }
+    else{
+        ifStatements.push('notActive');
+    }
+
+    iterateStatements(node.body);
+
+    firstNode = true;
+
+    if (tmpActive){
+        activeRun = true;
+    }
+
+
+
+    return true;
+}
+
+
 function addIfStatement(node){
-    //check else if
+
+    //node.value = escodegen.generate(node.test);
+    node.test.value = escodegen.generate(node.test);
+
     let type = node.else ? 'else '+ node.type : node.type;
-    appendObject(node.loc.start.line,type,'',getStatement(node.test),'');
+    //appendObject(node.loc.start.line,type,'',getStatement(node.test),'');
 
 
-    let test = evalNew(node.test);
+    let test = evalNew(getStatement(node.test));
+
+
 
     for (let num in globalParams) {
         test = test.replace(Object.keys(globalList)[num], evalNew(globalParams[num]));
@@ -257,27 +362,44 @@ function addIfStatement(node){
 
     let res = 'notActive';
 
-    if (activeRun) {
+    let tmpReactive = false;
+
+    if (haveArgs && activeRun) {
         if (eval(test) === true) {
             res = 'true';
+            node.result = 'true';
         }
         else{
             res = 'false';
+            node.result = 'false';
+            tmpReactive = true;
+            activeRun = false;
         }
     }
     else{
         res = 'notActive';
+        node.result = 'notActive';
     }
 
 
     ifStatements.push(res);
 
 
+    firstNode = true;
+
     let tmpLocalList = deepcopy(localList);
     let tmpGlobalList = deepcopy(globalList);
     addStatement(node.consequent);
     localList = deepcopy(tmpLocalList);
     globalList = deepcopy(tmpGlobalList);
+
+
+
+    if (tmpReactive){
+        activeRun = true;
+    }
+
+
 
 
     let tmpActive = false;
@@ -293,7 +415,7 @@ function addIfStatement(node){
     }
 
 
-
+    firstNode = true;
 
     if (node.alternate){
         if (node.alternate.type==='IfStatement'){
@@ -311,6 +433,8 @@ function addIfStatement(node){
     if (tmpActive){
         activeRun = true;
     }
+
+    firstNode = true;
 
     return true;
 }
@@ -359,12 +483,32 @@ function addExpression(node){
 function addUpdateExpression(node){
     let arg = getStatement(node.argument);
     if (node.prefix===false){
-        appendObject(node.loc.start.line,node.type,arg,'',arg + node.operator);
+        //appendObject(node.loc.start.line,node.type,arg,'',arg + node.operator);
+        node.value = escodegen.generate(node.argument) + node.operator;
     }
     else{
-        appendObject(node.loc.start.line,node.type,arg,'',node.operator+arg);
+        //appendObject(node.loc.start.line,node.type,arg,'',node.operator+arg);
+        node.value = node.operator + escodegen.generate(node.argument);
     }
-    return true;
+
+
+/*
+    if (localList[arg]!=null){
+        return false;
+    }
+*/
+
+
+    if (firstNode){
+        firstNode = false;
+        return true;
+    }
+    else{
+        return false;
+    }
+
+
+    //return true;
 
 }
 
