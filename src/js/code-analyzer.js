@@ -21,17 +21,18 @@ function colorGraph(splitGraph,cfg){
         if (nodeCount < nodeAmount) {
             let start = oldLine.indexOf('[');
             newLine = oldLine.slice(0, start + 1);
-            //let nodeNum = nodeCount + 1;
-            //if (nodeCount!=0 && nodeCount != nodeAmount-1 ){
+
             if (oldLine.includes('BinaryExpression') || oldLine.includes('Literal')){
                 //console.log(ifStatements[statement]);
-                if (ifStatements[statement]==='true') {
+                if (ifStatements[statement]==='true' || ifStatements[statement]==='false') {
                     newLine += 'color="green", ';
-                }
-                else if (ifStatements[statement]==='false') {
-                    newLine += 'color="red", ';
+                    newLine += 'shape="diamond", ';
+                    newLine += 'style="filled" ,';
                 }
                 statement++;
+            }
+            else{
+                newLine += 'shape="box", ';
             }
 
             let removeLable = oldLine.indexOf('label=');
@@ -60,15 +61,11 @@ function colorGraph(splitGraph,cfg){
 
 
 
-
             if (nodeCount!=0 && nodeCount != nodeAmount-1){
                 if (cfg[2][nodeCount].astNode.active) {
-                    //console.log('node count = ' + nodeCount)
-                    //console.log('node amount =' + nodeAmount)
-                    //console.log(cfg[2][nodeCount].astNode.active)
-                    newLine += 'color="green", ';
-                    //console.log(escodegen.generate(cfg[2][nodeCount].astNode));
 
+                    newLine += 'color="green", ';
+                    newLine += 'style="filled" ,';
 
                 }
 
@@ -81,7 +78,7 @@ function colorGraph(splitGraph,cfg){
             }
 
 
-            newLine += 'shape="box", ';
+
             newLine += oldLine.slice(start + 1);
 
             nodeCount++;
@@ -98,7 +95,7 @@ function colorGraph(splitGraph,cfg){
         //console.log(newLine);
     }
 
-    //console.log(newGraph);
+    console.log(newGraph);
 
 
 
