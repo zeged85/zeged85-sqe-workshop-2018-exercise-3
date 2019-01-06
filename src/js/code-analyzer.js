@@ -301,7 +301,15 @@ const table = (parsedCode, params)=>{
     ifStatements = [];
     activeRun = true;
     if (params[0]) {
-        globalParams = params[0].expression.expressions;
+        console.log(params)
+        if (params[0].expression.expressions) {
+            globalParams = params[0].expression.expressions;
+        }
+        else{
+            globalParams = [params[0].expression];
+        }
+        //haveArgs = true;
+        //activeRun = true;
     }
     parsedCode = iterateStatements(parsedCode);
     //console.log(escodegen.generate(parsedCode));

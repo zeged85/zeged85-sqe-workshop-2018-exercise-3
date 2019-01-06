@@ -18,6 +18,38 @@ describe('The javascript parser', () => {
         );
     });
 
+    /*
+    it('is parsing a demo1', () => {
+        assert.equal(
+            JSON.stringify(table(parseCode('function foo(){let a = 1;}'),parseCode('').body)),
+            '\"n0 [xlabel=\\\"0\\\", shape=\\\"box\\\",  style=\\\"rounded\\\"]\\nn1 [xlabel=\\\"1\\\", color=\\\"green\\\", label=\\\"a=1\\n\\\", shape=\\\"box\\\", ]\\nn2 [xlabel=\\\"2\\\", shape=\\\"box\\\",  style=\\\"rounded\\\"]\\nn0 -> n1 []\\nn1 -> n2 []\\n\"'
+        );
+    });
+    */
+
+
+    /*
+    it('is parsing the demo test', () => {
+        assert.equal(
+            JSON.stringify(table(parseCode('function foo(x, y, z){\n' +
+                '    let a = x + 1;\n' +
+                '    let b = a + y;\n' +
+                '    let c = 0;\n' +
+                '    \n' +
+                '    if (b < z) {\n' +
+                '        c = c + 5;\n' +
+                '    } else if (b < z * 2) {\n' +
+                '        c = c + x + 5;\n' +
+                '    } else {\n' +
+                '        c = c + z + 5;\n' +
+                '    }\n' +
+                '    \n' +
+                '    return c;\n' +
+                '}\n'),parseCode('').body)),
+            ''
+        );
+    });
+*/
 
 
 });
