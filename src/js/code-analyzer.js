@@ -35,6 +35,7 @@ function colorGraph(splitGraph,cfg){
                 newLine += 'shape="box", ';
             }
 
+
             let removeLable = oldLine.indexOf('label=');
             //console.log('labael is on ' + removeLable)
             if (removeLable > 0){
@@ -167,7 +168,7 @@ function fixGraph(graph,n){
         }
     }
 
-    //console.log(specialNodes);
+    console.log(specialNodes);
 
 
     //for x
@@ -190,7 +191,7 @@ function fixGraph(graph,n){
         //console.log('shifting '+ n)
         graph.splice(n,0, 'n'+n +' [label="null"]')
 
-        addToGraph.push('n'+n + '->n' + specialNodes[y] + ' []');
+        addToGraph.push('n'+n + ' -> n' + specialNodes[y] + ' []');
 
         for (let x = n; x<graph.length; x++) {
 
@@ -215,7 +216,8 @@ function fixGraph(graph,n){
 
                 //console.log(input);
 
-
+                console.log('adding null node: id=' + n);
+                console.log('assosiatae w/ ' + specialNodes[y]);
                 changeNodes(graph, input, specialNodes[y], n);
 
 
@@ -314,6 +316,8 @@ const table = (parsedCode, params)=>{
     let graph = esgraph.dot(cfg);
     let splitGraph = graph.toString().split('\n');
     splitGraph.pop();
+
+
     //splitGraph.unshift('n13 []');
     let removedExceptions = removeExceptions(splitGraph);
     let fixedGraph = fixGraph(removedExceptions, cfg[2].length);
@@ -324,18 +328,6 @@ const table = (parsedCode, params)=>{
 
 
 
-
-
-/*function appendObject(line,type,name,condition,value) {
-    const obj = {
-        line : line,
-        type : type,
-        name : name,
-        condition : condition,
-        value : value
-    };
-    list.push(obj);
-}*/
 
 
 

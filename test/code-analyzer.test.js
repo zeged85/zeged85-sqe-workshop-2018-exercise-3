@@ -14,7 +14,7 @@ describe('The javascript parser', () => {
     it('is parsing a simple variable declaration correctly', () => {
         assert.equal(
             JSON.stringify(table(parseCode('function foo(){let a = 1;}'),parseCode('').body)),
-            '\"n0 [xlabel=\\\"0\\\", shape=\\\"box\\\",  style=\\\"rounded\\\"]\\nn1 [xlabel=\\\"1\\\", label=\\\"a=1\\n\\\", shape=\\\"box\\\", ]\\nn2 [xlabel=\\\"2\\\", shape=\\\"box\\\",  style=\\\"rounded\\\"]\\nn0 -> n1 []\\nn1 -> n2 []\\n\"'
+            '\"n0 [shape=\\\"box\\\", xlabel=\\\"0\\\",  style=\\\"rounded\\\"]\\nn1 [shape=\\\"box\\\", xlabel=\\\"1\\\", label=\\\"a=1\\n\\\", ]\\nn2 [shape=\\\"box\\\", xlabel=\\\"2\\\",  style=\\\"rounded\\\"]\\nn0 -> n1 []\\nn1 -> n2 []\\n\"'
         );
     });
 
@@ -22,20 +22,23 @@ describe('The javascript parser', () => {
     it('is parsing a simple variable declaration correctly again', () => {
         assert.equal(
             JSON.stringify(table(parseCode('function foo(){let a = 1;}'),parseCode('').body)),
-            '\"n0 [xlabel=\\\"0\\\", shape=\\\"box\\\",  style=\\\"rounded\\\"]\\nn1 [xlabel=\\\"1\\\", label=\\\"a=1\\n\\\", shape=\\\"box\\\", ]\\nn2 [xlabel=\\\"2\\\", shape=\\\"box\\\",  style=\\\"rounded\\\"]\\nn0 -> n1 []\\nn1 -> n2 []\\n\"'
+            '\"n0 [shape=\\\"box\\\", xlabel=\\\"0\\\",  style=\\\"rounded\\\"]\\nn1 [shape=\\\"box\\\", xlabel=\\\"1\\\", label=\\\"a=1\\n\\\", ]\\nn2 [shape=\\\"box\\\", xlabel=\\\"2\\\",  style=\\\"rounded\\\"]\\nn0 -> n1 []\\nn1 -> n2 []\\n\"'
         );
     });
 
 
-/*
+
+
+
+
     it('is parsing an active flow minimum', () => {
         assert.equal(
-            JSON.stringify(table(parseCode('function foo(){let a = 1;}'),parseCode('').body)),
-            '\"n0 [xlabel=\\\"0\\\", shape=\\\"box\\\",  style=\\\"rounded\\\"]\\nn1 [xlabel=\\\"1\\\", label=\\\"a=1\\n\\\", shape=\\\"box\\\", ]\\nn2 [xlabel=\\\"2\\\",shape=\\\"box\\\",  style=\\\"rounded\\\"]\\nn0 -> n1 []\\nn1 -> n2 []\\n\"'
+            JSON.stringify(table(parseCode('function foo(x){let a = 1;}'),parseCode('').body)),
+            '\"n0 [shape=\\\"box\\\", xlabel=\\\"0\\\",  style=\\\"rounded\\\"]\\nn1 [shape=\\\"box\\\", xlabel=\\\"1\\\", label=\\\"a=1\\n\\\", ]\\nn2 [shape=\\\"box\\\", xlabel=\\\"2\\\",  style=\\\"rounded\\\"]\\nn0 -> n1 []\\nn1 -> n2 []\\n\"'
         );
     });
 
-*/
+
 
 
     it('is parsing the demo test', () => {
@@ -55,9 +58,11 @@ describe('The javascript parser', () => {
                 '    \n' +
                 '    return c;\n' +
                 '}\n'),parseCode('').body)),
-            '\"n0 [xlabel=\\\"0\\\", shape=\\\"box\\\",  style=\\\"rounded\\\"]\\nn1 [xlabel=\\\"1\\\", label=\\\"a=x + 1\\nb=a + y\\nc=0\\n\\\", shape=\\\"box\\\", ]\\nn2 [xlabel=\\\"2\\\", label=\\\"b < z\\\", shape=\\\"box\\\", ]\\nn3 [xlabel=\\\"3\\\", label=\\\"c=c + 5\\\", shape=\\\"box\\\", ]\\nn4 [xlabel=\\\"4\\\", label=\\\"return c\\\", shape=\\\"box\\\", ]\\nn5 [xlabel=\\\"5\\\", label=\\\"b < z * 2\\\", shape=\\\"box\\\", ]\\nn6 [xlabel=\\\"6\\\", label=\\\"c=c + x + 5\\\", shape=\\\"box\\\", ]\\nn7 [xlabel=\\\"7\\\", label=\\\"c=c + z + 5\\\", shape=\\\"box\\\", ]\\nn8 [xlabel=\\\"8\\\", shape=\\\"box\\\",  style=\\\"rounded\\\"]\\nn9 [label=\\\"null\\\"]\\nn0 -> n1 []\\nn1 -> n2 []\\nn2 -> n3 [label=\\\"true\\\"]\\nn2 -> n5 [label=\\\"false\\\"]\\nn3 -> n9 []\\nn4 -> n8 []\\nn5 -> n6 [label=\\\"true\\\"]\\nn5 -> n7 [label=\\\"false\\\"]\\nn6 -> n9 []\\nn7 -> n9 []\\nn9->n4 []\\n\"'
+            '\"n0 [shape=\\\"box\\\", xlabel=\\\"0\\\",  style=\\\"rounded\\\"]\\nn1 [shape=\\\"box\\\", xlabel=\\\"1\\\", label=\\\"a=x + 1\\nb=a + y\\nc=0\\n\\\", ]\\nn2 [xlabel=\\\"2\\\", label=\\\"b < z\\\", ]\\nn3 [shape=\\\"box\\\", xlabel=\\\"3\\\", label=\\\"c=c + 5\\\", ]\\nn4 [shape=\\\"box\\\", xlabel=\\\"4\\\", label=\\\"return c\\\", ]\\nn5 [xlabel=\\\"5\\\", label=\\\"b < z * 2\\\", ]\\nn6 [shape=\\\"box\\\", xlabel=\\\"6\\\", label=\\\"c=c + x + 5\\\", ]\\nn7 [shape=\\\"box\\\", xlabel=\\\"7\\\", label=\\\"c=c + z + 5\\\", ]\\nn8 [shape=\\\"box\\\", xlabel=\\\"8\\\",  style=\\\"rounded\\\"]\\nn9 [label=\\\"null\\\"]\\nn0 -> n1 []\\nn1 -> n2 []\\nn2 -> n3 [label=\\\"true\\\"]\\nn2 -> n5 [label=\\\"false\\\"]\\nn3 -> n9 []\\nn4 -> n8 []\\nn5 -> n6 [label=\\\"true\\\"]\\nn5 -> n7 [label=\\\"false\\\"]\\nn6 -> n9 []\\nn7 -> n9 []\\nn9 -> n4 []\\n\"'
         );
     });
+
+
 
 
 
@@ -78,11 +83,49 @@ describe('The javascript parser', () => {
                 '    \n' +
                 '    return c;\n' +
                 '}\n'),parseCode('1,2,3').body)),
-            '\"n0 [xlabel=\\\"0\\\", shape=\\\"box\\\",  style=\\\"rounded\\\"]\\nn1 [xlabel=\\\"1\\\", color=\\\"green\\\", label=\\\"a=x + 1\\nb=a + y\\nc=0\\n\\\", shape=\\\"box\\\", ]\\nn2 [color=\\\"red\\\", xlabel=\\\"2\\\", label=\\\"b < z\\\", shape=\\\"box\\\", ]\\nn3 [xlabel=\\\"3\\\", label=\\\"c=c + 5\\\", shape=\\\"box\\\", ]\\nn4 [xlabel=\\\"4\\\", color=\\\"green\\\", label=\\\"return c\\\", shape=\\\"box\\\", ]\\nn5 [color=\\\"green\\\", xlabel=\\\"5\\\", label=\\\"b < z * 2\\\", shape=\\\"box\\\", ]\\nn6 [xlabel=\\\"6\\\", color=\\\"green\\\", label=\\\"c=c + x + 5\\\", shape=\\\"box\\\", ]\\nn7 [xlabel=\\\"7\\\", label=\\\"c=c + z + 5\\\", shape=\\\"box\\\", ]\\nn8 [xlabel=\\\"8\\\", shape=\\\"box\\\",  style=\\\"rounded\\\"]\\nn9 [label=\\\"null\\\"]\\nn0 -> n1 []\\nn1 -> n2 []\\nn2 -> n3 [label=\\\"true\\\"]\\nn2 -> n5 [label=\\\"false\\\"]\\nn3 -> n9 []\\nn4 -> n8 []\\nn5 -> n6 [label=\\\"true\\\"]\\nn5 -> n7 [label=\\\"false\\\"]\\nn6 -> n9 []\\nn7 -> n9 []\\nn9->n4 []\\n\"'
+            '\"n0 [shape=\\\"box\\\", xlabel=\\\"0\\\",  style=\\\"rounded\\\"]\\nn1 [shape=\\\"box\\\", xlabel=\\\"1\\\", color=\\\"green\\\", style=\\\"filled\\\" ,label=\\\"a=x + 1\\nb=a + y\\nc=0\\n\\\", ]\\nn2 [color=\\\"green\\\", shape=\\\"diamond\\\", style=\\\"filled\\\" ,xlabel=\\\"2\\\", label=\\\"b < z\\\", ]\\nn3 [shape=\\\"box\\\", xlabel=\\\"3\\\", label=\\\"c=c + 5\\\", ]\\nn4 [shape=\\\"box\\\", xlabel=\\\"4\\\", color=\\\"green\\\", style=\\\"filled\\\" ,label=\\\"return c\\\", ]\\nn5 [color=\\\"green\\\", shape=\\\"diamond\\\", style=\\\"filled\\\" ,xlabel=\\\"5\\\", label=\\\"b < z * 2\\\", ]\\nn6 [shape=\\\"box\\\", xlabel=\\\"6\\\", color=\\\"green\\\", style=\\\"filled\\\" ,label=\\\"c=c + x + 5\\\", ]\\nn7 [shape=\\\"box\\\", xlabel=\\\"7\\\", label=\\\"c=c + z + 5\\\", ]\\nn8 [shape=\\\"box\\\", xlabel=\\\"8\\\",  style=\\\"rounded\\\"]\\nn9 [label=\\\"null\\\"]\\nn0 -> n1 []\\nn1 -> n2 []\\nn2 -> n3 [label=\\\"true\\\"]\\nn2 -> n5 [label=\\\"false\\\"]\\nn3 -> n9 []\\nn4 -> n8 []\\nn5 -> n6 [label=\\\"true\\\"]\\nn5 -> n7 [label=\\\"false\\\"]\\nn6 -> n9 []\\nn7 -> n9 []\\nn9 -> n4 []\\n\"'
+        );
+    });
+
+    it('is parsing the demo while statement', () => {
+        assert.equal(
+            JSON.stringify(table(parseCode('function foo(x, y, z){\n' +
+                '   let a = x + 1;\n' +
+                '   let b = a + y;\n' +
+                '   let c = 0;\n' +
+                '   \n' +
+                '   while (a < z) {\n' +
+                '       c = a + b;\n' +
+                '       z = c * 2;\n' +
+                '       a++;\n' +
+                '   }\n' +
+                '   \n' +
+                '   return z;\n' +
+                '}\n'),parseCode('').body)),
+            '\"n0 [shape=\\\"box\\\", xlabel=\\\"0\\\",  style=\\\"rounded\\\"]\\nn1 [shape=\\\"box\\\", xlabel=\\\"1\\\", label=\\\"a=x + 1\\nb=a + y\\nc=0\\n\\\", ]\\nn2 [xlabel=\\\"2\\\", label=\\\"a < z\\\", ]\\nn3 [shape=\\\"box\\\", xlabel=\\\"3\\\", label=\\\"c=a + b\\nz=c * 2\\na++\\\", ]\\nn4 [shape=\\\"box\\\", xlabel=\\\"4\\\", label=\\\"return z\\\", ]\\nn5 [shape=\\\"box\\\", xlabel=\\\"5\\\",  style=\\\"rounded\\\"]\\nn6 [label=\\\"null\\\"]\\nn0 -> n1 []\\nn1 -> n6 []\\nn2 -> n3 [label=\\\"true\\\"]\\nn2 -> n4 [label=\\\"false\\\"]\\nn3 -> n6 []\\nn4 -> n5 []\\nn6 -> n2 []\\n\"'
         );
     });
 
 
+
+    it('is parsing the demo while statement with args1', () => {
+        assert.equal(
+            JSON.stringify(table(parseCode('function foo(x, y, z){\n' +
+                '   let a = x + 1;\n' +
+                '   let b = a + y;\n' +
+                '   let c = 0;\n' +
+                '   \n' +
+                '   while (a < z) {\n' +
+                '       c = a + b;\n' +
+                '       z = c * 2;\n' +
+                '       a++;\n' +
+                '   }\n' +
+                '   \n' +
+                '   return z;\n' +
+                '}\n'),parseCode('1,2,3').body)),
+            '\"n0 [shape=\\\"box\\\", xlabel=\\\"0\\\",  style=\\\"rounded\\\"]\\nn1 [shape=\\\"box\\\", xlabel=\\\"1\\\", color=\\\"green\\\", style=\\\"filled\\\" ,label=\\\"a=x + 1\\nb=a + y\\nc=0\\n\\\", ]\\nn2 [color=\\\"green\\\", shape=\\\"diamond\\\", style=\\\"filled\\\" ,xlabel=\\\"2\\\", label=\\\"a < z\\\", ]\\nn3 [shape=\\\"box\\\", xlabel=\\\"3\\\", color=\\\"green\\\", style=\\\"filled\\\" ,label=\\\"c=a + b\\nz=c * 2\\na++\\\", ]\\nn4 [shape=\\\"box\\\", xlabel=\\\"4\\\", color=\\\"green\\\", style=\\\"filled\\\" ,label=\\\"return z\\\", ]\\nn5 [shape=\\\"box\\\", xlabel=\\\"5\\\",  style=\\\"rounded\\\"]\\nn6 [label=\\\"null\\\"]\\nn0 -> n1 []\\nn1 -> n6 []\\nn2 -> n3 [label=\\\"true\\\"]\\nn2 -> n4 [label=\\\"false\\\"]\\nn3 -> n6 []\\nn4 -> n5 []\\nn6 -> n2 []\\n\"'
+        );
+    });
 
 });
 
