@@ -18,14 +18,14 @@ describe('The javascript parser', () => {
         );
     });
 
-    /*
-    it('is parsing a demo1', () => {
+
+    it('is parsing an active flow minimum', () => {
         assert.equal(
             JSON.stringify(table(parseCode('function foo(){let a = 1;}'),parseCode('').body)),
-            '\"n0 [xlabel=\\\"0\\\", shape=\\\"box\\\",  style=\\\"rounded\\\"]\\nn1 [xlabel=\\\"1\\\", color=\\\"green\\\", label=\\\"a=1\\n\\\", shape=\\\"box\\\", ]\\nn2 [xlabel=\\\"2\\\", shape=\\\"box\\\",  style=\\\"rounded\\\"]\\nn0 -> n1 []\\nn1 -> n2 []\\n\"'
+            ''
         );
     });
-    */
+
 
 
     /*

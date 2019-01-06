@@ -298,7 +298,7 @@ function evalNew(node){
 
 const table = (parsedCode, params)=>{
     localList = []; globalList = []; haveArgs = false; globalParams = [];
-    ifStatements = [];
+    ifStatements = []; firstNode = true;
     activeRun = true;
     if (params[0]) {
         console.log(params)
@@ -575,9 +575,15 @@ function addIfStatement(node){
 }
 
 function addFunctionDeclaration(node){
-    if (node.params.length ===globalParams.length){
+    if (node.params.length ===globalParams.length && node.params.length > 0){
 
         haveArgs = true;
+
+        for (let param in node.params){
+            globalList[node.params[param].name]=getStatement(node.params[param]);
+            //appendObject(node.loc.start.line,'VariableDeclarator',getStatement(node.params[param]),'','');
+        }
+
     }
     else{
 
@@ -585,10 +591,7 @@ function addFunctionDeclaration(node){
     }
     //appendObject(node.loc.start.line,node.type,node.id.name,'','');
     //push params
-    for (let param in node.params){
-        globalList[node.params[param].name]=getStatement(node.params[param]);
-        //appendObject(node.loc.start.line,'VariableDeclarator',getStatement(node.params[param]),'','');
-    }
+
     //all var declerations are local
     //inFunction = true;
     node.body = iterateStatements(node.body);
