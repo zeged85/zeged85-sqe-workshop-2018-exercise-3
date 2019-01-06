@@ -127,6 +127,24 @@ describe('The javascript parser', () => {
         );
     });
 
+
+
+
+    it('is parsing if statement with member expression', () => {
+        assert.equal(
+            JSON.stringify(table(parseCode('function foo(x, y, z){\n' +
+                '   \n' +
+                '   if (\'test\' == z[0]) {\n' +
+                '    z[0]=\'hello\';\n' +
+                '   }\n' +
+                '   \n' +
+                '   return z;\n' +
+                '}\n'),parseCode('1,2,["test"]').body)),
+            '\"n0 [shape=\\\"box\\\", xlabel=\\\"0\\\",  style=\\\"rounded\\\"]\\nn1 [color=\\\"green\\\", shape=\\\"diamond\\\", style=\\\"filled\\\" ,xlabel=\\\"1\\\", label=\\\"\'test\' == z[0]\\\", ]\\nn2 [shape=\\\"box\\\", xlabel=\\\"2\\\", color=\\\"green\\\", style=\\\"filled\\\" ,label=\\\"z[0]=\'hello\'\\\", ]\\nn3 [shape=\\\"box\\\", xlabel=\\\"3\\\", color=\\\"green\\\", style=\\\"filled\\\" ,label=\\\"return z\\\", ]\\nn4 [shape=\\\"box\\\", xlabel=\\\"4\\\",  style=\\\"rounded\\\"]\\nn5 [label=\\\"null\\\"]\\nn0 -> n1 []\\nn1 -> n2 [label=\\\"true\\\"]\\nn1 -> n5 [label=\\\"false\\\"]\\nn2 -> n5 []\\nn3 -> n4 []\\nn5 -> n3 []\\n\"'
+        );
+    });
+
+
 });
 
 

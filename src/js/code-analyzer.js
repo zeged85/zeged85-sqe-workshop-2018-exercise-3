@@ -382,8 +382,16 @@ function addReturnStatement(node){
 
 
 function addAssignmentExpression(node){
-    node.value = node.left.name + '=' + escodegen.generate(node.right);
-    let left = node.left.name;
+    let name;
+    if (node.left.type=='MemberExpression'){
+        //return getStatement(node.object) + '['+getStatement(node.property)+']';
+        name = node.left.object.name + '[' + evalNew(getStatement(node.left.property))+ ']';
+    }
+    else{
+        name = node.left.name;
+    }
+    node.value = name + '=' + escodegen.generate(node.right);
+    let left = name;
     let right = getStatement(node.right);
     //appendObject(node.loc.start.line,node.type,left,'',evalNew(right));
     if (globalList[left]!=null){
