@@ -32,11 +32,11 @@ $(document).ready(function () {
 
         let textedCode, ifStatements
         let myRes    = table(parsedCode,parsedArguments.body);
-        textedCode = myRes[0];
-        ifStatements = myRes[1];
+        //textedCode = myRes[0];
+        //ifStatements = myRes[1];
 
         console.log('if statements:');
-        console.log(ifStatements)
+        //console.log(ifStatements)
 
 
 
@@ -46,7 +46,7 @@ $(document).ready(function () {
 
 
 
-        let svg = david( 'digraph {'  + myRes[2] + '}');
+        let svg = david( 'digraph {'  + myRes + '}');
        // let svg = david( 'digraph {'  + newGraph + '}');
 
         //console.log(svg);
@@ -62,6 +62,7 @@ $(document).ready(function () {
 
         //let textedCode = escodegen.generate(parsedCode);
 
+        /*
 
         let coloredCode = textedCode.split('\n');
 
@@ -88,7 +89,7 @@ $(document).ready(function () {
             }
         }
 
-
+*/
 
         $('#parsedCode').html(svg);
 
