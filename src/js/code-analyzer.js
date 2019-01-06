@@ -36,7 +36,7 @@ function colorGraph(splitGraph,cfg){
             //if (nodeCount!=0 && nodeCount != nodeAmount-1 ){
 
             if (oldLine.includes('BinaryExpression') || oldLine.includes('Literal')){
-                console.log(ifStatements[statement]);
+                //console.log(ifStatements[statement]);
                 if (ifStatements[statement]==='true') {
                     newLine += 'color="green", ';
                 }
@@ -49,23 +49,23 @@ function colorGraph(splitGraph,cfg){
 
 
             let removeLable = oldLine.indexOf('label=');
-            console.log('labael is on ' + removeLable)
+            //console.log('labael is on ' + removeLable)
             if (removeLable > 0){
                 let ending = oldLine.indexOf('"',removeLable);
                 let nextEnd = oldLine.indexOf('"',ending + 1 );
 
 
                 if (oldLine.slice(nextEnd+1,nextEnd+2) ===',') {
-                    console.log(oldLine.slice(nextEnd + 1, nextEnd + 2));
+                    //console.log(oldLine.slice(nextEnd + 1, nextEnd + 2));
                     nextEnd += 1;
                 }
 
                 let oldLabel = oldLine.slice(removeLable,nextEnd+1);
-                console.log(oldLabel);
+                //console.log(oldLabel);
 
                 oldLine =  oldLine.replace(oldLabel, '');
 
-                console.log(oldLine);
+                //console.log(oldLine);
 
             }
 
@@ -85,18 +85,18 @@ function colorGraph(splitGraph,cfg){
 
             if (nodeCount!=0 && nodeCount != nodeAmount-1){
                 if (cfg[2][nodeCount].astNode.active) {
-                    console.log('node count = ' + nodeCount)
-                    console.log('node amount =' + nodeAmount)
-                    console.log(cfg[2][nodeCount].astNode.active)
+                    //console.log('node count = ' + nodeCount)
+                    //console.log('node amount =' + nodeAmount)
+                    //console.log(cfg[2][nodeCount].astNode.active)
                     newLine += 'color="green", ';
-                    console.log(escodegen.generate(cfg[2][nodeCount].astNode));
+                    //console.log(escodegen.generate(cfg[2][nodeCount].astNode));
 
 
                 }
 
                 let label = cfg[2][nodeCount].astNode.value;
 
-                console.log(label);
+                //console.log(label);
 
                 newLine += 'label="'+ label + '", ';
 
@@ -121,10 +121,10 @@ function colorGraph(splitGraph,cfg){
             newGraph += newLine + '\n';
         }
 
-        console.log(newLine);
+        //console.log(newLine);
     }
 
-    console.log(newGraph);
+    //console.log(newGraph);
 
 
 
@@ -154,12 +154,12 @@ function removeExceptions(graph){
 
 function changeNodes(graph, thisNode, from, to){
 
-    console.log('changing nodes')
+    //console.log('changing nodes')
 
     for (let x in graph){
         let name = thisNode + ' -> n' + from;
 
-
+        let tmpStr = '';
         if (graph[x].includes(name)){
             //console.log(name)
             //console.log(graph[x] )
@@ -168,10 +168,10 @@ function changeNodes(graph, thisNode, from, to){
             //console.log('to: ' + to);
 
 
-            let newstr = graph[x].split('[')[0].replace(from,to) + '[' +  graph[x].split('[')[1];
-            //console.log(newstr)
+            tmpStr = graph[x].split('[')[0].replace(from,to) + '[' +  graph[x].split('[')[1];
 
-            graph[x]= newstr;
+
+            graph[x]= tmpStr;
         }
     }
 
@@ -179,14 +179,14 @@ function changeNodes(graph, thisNode, from, to){
 
 
 function fixGraph(graph,n){
-    console.log('there are ' + n + 'nodes');
+    //console.log('there are ' + n + 'nodes');
 
-
+/*
     for (let x = n; x<graph.length; x++){
 
         console.log(graph[x]);
     }
-
+*/
 
     //find count x nodes w/ two+ inputs
 
@@ -194,11 +194,11 @@ function fixGraph(graph,n){
 
     //init array
     for (let x = 0; x<n; x++){
-        console.log(x + '=0');
+        //console.log(x + '=0');
         inputCounter[x]=0;
     }
 
-    console.log(graph)
+    //console.log(graph)
 
     for (let x = n; x<graph.length; x++){
 
@@ -214,7 +214,7 @@ function fixGraph(graph,n){
 
     }
 
-    console.log(inputCounter);
+    //console.log(inputCounter);
 
     let specialNodes = [];
 
@@ -224,7 +224,7 @@ function fixGraph(graph,n){
         }
     }
 
-    console.log(specialNodes);
+    //console.log(specialNodes);
 
 
     //for x
@@ -244,7 +244,7 @@ function fixGraph(graph,n){
     for (let y = 0; y < specialNodes.length; y++){
 
 
-        console.log('shifting '+ n)
+        //console.log('shifting '+ n)
         graph.splice(n,0, 'n'+n +' [label="null"]')
 
         addToGraph.push('n'+n + '->n' + specialNodes[y] + ' []');
@@ -265,12 +265,12 @@ function fixGraph(graph,n){
 
 
             if (post === parseInt(specialNodes[y])) {
-                console.log('match!');
-                console.log(graph[x]);
+                //console.log('match!');
+                //console.log(graph[x]);
 
                 let input = parseInt( pre[1].split(' ')[0] );
 
-                console.log(input);
+                //console.log(input);
 
 
                 changeNodes(graph, input, specialNodes[y], n);
@@ -284,8 +284,8 @@ function fixGraph(graph,n){
     }
 
 
-    console.log('adding to graph');
-    console.log((addToGraph))
+    //console.log('adding to graph');
+    //console.log((addToGraph))
 
     graph = graph.concat(addToGraph);
 
@@ -304,17 +304,17 @@ function fixGraph(graph,n){
 
 
 const parseCode = (codeToParse) => {
-    console.log('in parse');
+    //console.log('in parse');
     return esprima.parseScript(codeToParse,{loc:true});
 };
 
-let list = [];
+//let list = [];
 
 let localList = [];
 
 let globalList = [];
 
-let inFunction = false;
+//let inFunction = false;
 
 let haveArgs = false;
 
@@ -349,7 +349,7 @@ function iterateStatements(root){
                 value = root.body[i].value;
             }
 
-            console.log(value);
+            //console.log(value);
 
             if (root.body[i-1].expression) {
                 root.body[i - 1].expression.value += '\n' + value;
@@ -381,13 +381,13 @@ function evalNew(node){
 const table = (parsedCode, params)=>{
 
 
-    list = [];
+    //list = [];
 
     localList = [];
 
     globalList = [];
 
-    inFunction = false;
+   // inFunction = false;
 
     haveArgs = false;
 
@@ -416,7 +416,7 @@ const table = (parsedCode, params)=>{
     }
 */
 
-    list = [];
+    //list = [];
 
 
 
@@ -427,19 +427,6 @@ const table = (parsedCode, params)=>{
 
 
 
-
-
-// return [evalNew(parsedCode), ifStatements];
-
-
-    //let textedCode; // ifStatements
-
-   // textedCode = myRes[0];
-   // ifStatements = myRes[1];
-
-
-    //let textedCode = evalNew(parsedCode);
-    //ifStatements = myRes[1];
 
 
 
@@ -483,140 +470,6 @@ const table = (parsedCode, params)=>{
 
     let flowGraph = colorGraph(splitGraph,cfg);
 
-   /*
-
-    let nodeCount = 0;
-
-    let nodeAmount = cfg[2].length;
-
-
-
-    let newGraph = '';
-
-    let statement = 0;
-
-    for (let line in splitGraph){
-        let newLine;
-        let oldLine = splitGraph[line];
-
-        //only change declerations
-        if (nodeCount < nodeAmount) {
-            let start = oldLine.indexOf('[');
-            newLine = oldLine.slice(0, start + 1);
-
-            //let nodeNum = nodeCount + 1;
-
-            //if (nodeCount!=0 && nodeCount != nodeAmount-1 ){
-
-            if (oldLine.includes('BinaryExpression') || oldLine.includes('Literal')){
-                console.log(ifStatements[statement]);
-                if (ifStatements[statement]==='true') {
-                    newLine += 'color="green", ';
-                }
-                else if (ifStatements[statement]==='false') {
-                    newLine += 'color="red", ';
-                }
-                statement++;
-            }
-
-
-
-            let removeLable = oldLine.indexOf('label=');
-            console.log('labael is on ' + removeLable)
-            if (removeLable > 0){
-                let ending = oldLine.indexOf('"',removeLable);
-                let nextEnd = oldLine.indexOf('"',ending + 1 );
-
-
-                if (oldLine.slice(nextEnd+1,nextEnd+2) ===',') {
-                    console.log(oldLine.slice(nextEnd + 1, nextEnd + 2));
-                    nextEnd += 1;
-                }
-
-                let oldLabel = oldLine.slice(removeLable,nextEnd+1);
-                console.log(oldLabel);
-
-                oldLine =  oldLine.replace(oldLabel, '');
-
-                console.log(oldLine);
-
-            }
-
-
-
-
-            //+1
-            newLine += 'xlabel="'+ (nodeCount) + '", ';
-
-
-
-
-
-
-
-
-
-            if (nodeCount!=0 && nodeCount != nodeAmount-1){
-                if (cfg[2][nodeCount].astNode.active) {
-                    console.log('node count = ' + nodeCount)
-                    console.log('node amount =' + nodeAmount)
-                    console.log(cfg[2][nodeCount].astNode.active)
-                    newLine += 'color="green", ';
-                    console.log(escodegen.generate(cfg[2][nodeCount].astNode));
-
-
-                }
-
-                let label = cfg[2][nodeCount].astNode.value;
-
-                console.log(label);
-
-                newLine += 'label="'+ label + '", ';
-
-            }
-
-
-
-
-
-
-            newLine += 'shape="box", ';
-            newLine += oldLine.slice(start + 1);
-
-            nodeCount++;
-        }
-        else{
-            newLine = oldLine;
-        }
-
-        //remove exceptions
-        if (!newLine.includes('exception')) {
-            newGraph += newLine + '\n';
-        }
-
-        console.log(newLine);
-    }
-
-    console.log(newGraph);
-
-
-
-
-
-
-*/
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -629,7 +482,7 @@ const table = (parsedCode, params)=>{
 
 
 
-function appendObject(line,type,name,condition,value) {
+/*function appendObject(line,type,name,condition,value) {
     const obj = {
         line : line,
         type : type,
@@ -638,7 +491,7 @@ function appendObject(line,type,name,condition,value) {
         value : value
     };
     list.push(obj);
-}
+}*/
 
 
 
@@ -654,7 +507,7 @@ function addStatement(node){
         'IfStatement' : addIfStatement,
         'FunctionDeclaration' : addFunctionDeclaration,
         'WhileStatement' : addWhileStatement,
-        'ForStatement' : addForStatement,
+        //'ForStatement' : addForStatement,
         'UpdateExpression' : addUpdateExpression,
         'BlockStatement' : iterateStatements
     };
@@ -697,30 +550,16 @@ function addReturnStatement(node){
 
 
 function addAssignmentExpression(node){
-    //updateVariable(getStatement(node.left),getStatement(node.right));
-    //if (node.) is global or local
-    //let left = node.left.name;
-
     node.value = node.left.name + '=' + escodegen.generate(node.right);
-
-
     let left = node.left.name;
     let right = getStatement(node.right);
-
     //appendObject(node.loc.start.line,node.type,left,'',evalNew(right));
-
-
-
-
-
     if (globalList[left]!=null){
         globalList[left] = right;
     }
     else{
         localList[left] = right;
     }
-
-
     if (firstNode){
         firstNode = false;
         return true;
@@ -728,8 +567,6 @@ function addAssignmentExpression(node){
     else{
         return false;
     }
-
-
 }
 
 function addVariableDeclaration(node){
@@ -760,9 +597,7 @@ function addVariableDeclarator(node){
 
     //node.value = left + '=' + escodegen.generate(node.init);
 
-
     localList[left]=right;
-
 
     if (firstNode){
         firstNode = false;
@@ -785,27 +620,17 @@ function deepcopy(list){
 
 function addWhileStatement(node){
     //appendObject(node.loc.start.line,node.type,'',getStatement(node.test),'');
-
     node.test.value = escodegen.generate(node.test);
-
     firstNode = true;
-
     //console.log('in while')
     //console.log(activeRun);
-
     let tmpActive = false;
-
     if (activeRun){
         let test = evalNew(getStatement(node.test));
-
         for (let num in globalParams) {
             test = test.replace(Object.keys(globalList)[num], evalNew(globalParams[num]));
         }
-
         //console.log(test);
-
-
-
         if (eval(test) === false) {
             activeRun = false;
             tmpActive = true;
@@ -814,22 +639,15 @@ function addWhileStatement(node){
         else{
             ifStatements.push('true');
         }
-
     }
     else{
         ifStatements.push('notActive');
     }
-
     iterateStatements(node.body);
-
     firstNode = true;
-
     if (tmpActive){
         activeRun = true;
     }
-
-
-
     return true;
 }
 
@@ -839,12 +657,11 @@ function addIfStatement(node){
     //node.value = escodegen.generate(node.test);
     node.test.value = escodegen.generate(node.test);
 
-    let type = node.else ? 'else '+ node.type : node.type;
+    //let type = node.else ? 'else '+ node.type : node.type;
     //appendObject(node.loc.start.line,type,'',getStatement(node.test),'');
 
 
     let test = evalNew(getStatement(node.test));
-
 
 
     for (let num in globalParams) {
@@ -913,9 +730,11 @@ function addIfStatement(node){
         if (node.alternate.type==='IfStatement'){
             node.alternate.else=true;
         }
+        /*
         else{
             appendObject(node.consequent.loc.end.line+1,'else statement','','','');
         }
+        */
         addStatement(node.alternate);
         localList = deepcopy(tmpLocalList);
         globalList = deepcopy(tmpGlobalList);
@@ -940,14 +759,14 @@ function addFunctionDeclaration(node){
 
         activeRun = false;
     }
-    appendObject(node.loc.start.line,node.type,node.id.name,'','');
+    //appendObject(node.loc.start.line,node.type,node.id.name,'','');
     //push params
     for (let param in node.params){
         globalList[node.params[param].name]=getStatement(node.params[param]);
-        appendObject(node.loc.start.line,'VariableDeclarator',getStatement(node.params[param]),'','');
+        //appendObject(node.loc.start.line,'VariableDeclarator',getStatement(node.params[param]),'','');
     }
     //all var declerations are local
-    inFunction = true;
+    //inFunction = true;
     node.body = iterateStatements(node.body);
     return true;
 }
@@ -957,15 +776,15 @@ function addFunctionDeclaration(node){
 
 
 
-
+/*
 function addForStatement(node){
     let condition = getStatement(node.init) +';'+ getStatement(node.test)+';'+getStatement(node.update);
-    appendObject(node.loc.start.line,node.type,'',condition,'');
+    //appendObject(node.loc.start.line,node.type,'',condition,'');
 
     for (let statement in node.body.body){
         addStatement(node.body.body[statement]);
     }
-}
+}*/
 
 function addExpression(node){
 
@@ -973,7 +792,7 @@ function addExpression(node){
 }
 
 function addUpdateExpression(node){
-    let arg = getStatement(node.argument);
+    getStatement(node.argument);
     if (node.prefix===false){
         //appendObject(node.loc.start.line,node.type,arg,'',arg + node.operator);
         node.value = escodegen.generate(node.argument) + node.operator;
@@ -983,9 +802,6 @@ function addUpdateExpression(node){
         node.value = node.operator + escodegen.generate(node.argument);
     }
 
-
-
-
     if (firstNode){
         firstNode = false;
         return true;
@@ -993,9 +809,6 @@ function addUpdateExpression(node){
     else{
         return false;
     }
-
-
-    //return true;
 
 }
 
