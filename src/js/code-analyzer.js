@@ -9,32 +9,20 @@ var esgraph = require('esgraph');
 
 
 function colorGraph(splitGraph,cfg){
-
-
-
     let nodeCount = 0;
-
     let nodeAmount = cfg[2].length;
-
-
-
     let newGraph = '';
-
     let statement = 0;
 
     for (let line in splitGraph){
         let newLine;
         let oldLine = splitGraph[line];
-
         //only change declerations
         if (nodeCount < nodeAmount) {
             let start = oldLine.indexOf('[');
             newLine = oldLine.slice(0, start + 1);
-
             //let nodeNum = nodeCount + 1;
-
             //if (nodeCount!=0 && nodeCount != nodeAmount-1 ){
-
             if (oldLine.includes('BinaryExpression') || oldLine.includes('Literal')){
                 //console.log(ifStatements[statement]);
                 if (ifStatements[statement]==='true') {
@@ -46,14 +34,11 @@ function colorGraph(splitGraph,cfg){
                 statement++;
             }
 
-
-
             let removeLable = oldLine.indexOf('label=');
             //console.log('labael is on ' + removeLable)
             if (removeLable > 0){
                 let ending = oldLine.indexOf('"',removeLable);
                 let nextEnd = oldLine.indexOf('"',ending + 1 );
-
 
                 if (oldLine.slice(nextEnd+1,nextEnd+2) ===',') {
                     //console.log(oldLine.slice(nextEnd + 1, nextEnd + 2));
@@ -62,11 +47,8 @@ function colorGraph(splitGraph,cfg){
 
                 let oldLabel = oldLine.slice(removeLable,nextEnd+1);
                 //console.log(oldLabel);
-
                 oldLine =  oldLine.replace(oldLabel, '');
-
                 //console.log(oldLine);
-
             }
 
 
@@ -74,10 +56,6 @@ function colorGraph(splitGraph,cfg){
 
             //+1
             newLine += 'xlabel="'+ (nodeCount) + '", ';
-
-
-
-
 
 
 
@@ -103,10 +81,6 @@ function colorGraph(splitGraph,cfg){
             }
 
 
-
-
-
-
             newLine += 'shape="box", ';
             newLine += oldLine.slice(start + 1);
 
@@ -128,13 +102,7 @@ function colorGraph(splitGraph,cfg){
 
 
 
-
-
-
-
-
-
-return newGraph;
+    return newGraph;
 
 
 }
@@ -153,12 +121,9 @@ function removeExceptions(graph){
 
 
 function changeNodes(graph, thisNode, from, to){
-
     //console.log('changing nodes')
-
     for (let x in graph){
         let name = thisNode + ' -> n' + from;
-
         let tmpStr = '';
         if (graph[x].includes(name)){
             //console.log(name)
@@ -166,32 +131,15 @@ function changeNodes(graph, thisNode, from, to){
             //console.log('change :' + thisNode);
             //console.log('from :' + from);
             //console.log('to: ' + to);
-
-
             tmpStr = graph[x].split('[')[0].replace(from,to) + '[' +  graph[x].split('[')[1];
-
-
             graph[x]= tmpStr;
         }
     }
-
 }
 
 
 function fixGraph(graph,n){
-    //console.log('there are ' + n + 'nodes');
-
-/*
-    for (let x = n; x<graph.length; x++){
-
-        console.log(graph[x]);
-    }
-*/
-
-    //find count x nodes w/ two+ inputs
-
     let inputCounter = {};
-
     //init array
     for (let x = 0; x<n; x++){
         //console.log(x + '=0');
@@ -210,8 +158,6 @@ function fixGraph(graph,n){
         let post = parseInt(pre.split(' ')[0]);
         //console.log(post);
         inputCounter[(post)]++;
-
-
     }
 
     //console.log(inputCounter);
@@ -290,14 +236,6 @@ function fixGraph(graph,n){
     graph = graph.concat(addToGraph);
 
     return graph;
-
-
-    /*
-        for (let line in graph){
-
-            console.log('->'+graph[line]);
-        }
-        */
 }
 
 
@@ -328,48 +266,28 @@ let firstNode = true;
 
 
 function iterateStatements(root){
-
-    //let body = root.body;
-
-    //var l = root.body.length;
-    for(var i = 0; i < root.body.length; i++){
+    for(let i = 0; i < root.body.length; i++){
         if (addStatement(root.body[i])===false){
-            //append value to first node
-            //console.log('appending:')
-            //console.log(root.body[i-1].expression)
-            //console.log(root.body[i].expression);
-            //console.log('root.body[i-1].value = '+ root.body[i-1].expression.value + '+' + root.body[i].expression.value);
-
             let value;
-
             if (root.body[i].expression){
                 value = root.body[i].expression.value;
             }
             else{
                 value = root.body[i].value;
             }
-
-            //console.log(value);
-
             if (root.body[i-1].expression) {
                 root.body[i - 1].expression.value += '\n' + value;
             }
             else{
                 root.body[i - 1].value += value;
             }
-
             //remove from list
             root.body.splice(i, 1);
             i--;
-
         }
     }
     return root;
 }
-
-
-
-
 
 
 
@@ -379,103 +297,24 @@ function evalNew(node){
 
 
 const table = (parsedCode, params)=>{
-
-
-    //list = [];
-
-    localList = [];
-
-    globalList = [];
-
-   // inFunction = false;
-
-    haveArgs = false;
-
-    globalParams = [];
-
+    localList = []; globalList = []; haveArgs = false; globalParams = [];
     ifStatements = [];
-
     activeRun = true;
-
-
-
     if (params[0]) {
         globalParams = params[0].expression.expressions;
     }
-
-
-
     parsedCode = iterateStatements(parsedCode);
-
-
-    /*
-    let ans = [];
-    for (let statement in list){
-        ans.push(list[statement]);
-        //console.log(list[statement]);
-    }
-*/
-
-    //list = [];
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    console.log(escodegen.generate(parsedCode));
-
+    //console.log(escodegen.generate(parsedCode));
     let cfg = esgraph(parsedCode.body[0].body);
-    console.log('cfg');
-    console.log(cfg);
-
     let graph = esgraph.dot(cfg);
-
-
-
-    console.log('graph');
-    console.log(graph);
-
-
-
-
-
-
-
-
-
     let splitGraph = graph.toString().split('\n');
-
-
-
     splitGraph.pop();
-
     //splitGraph.unshift('n13 []');
-
     let removedExceptions = removeExceptions(splitGraph);
-
-
     let fixedGraph = fixGraph(removedExceptions, cfg[2].length);
-
     splitGraph = fixedGraph;
-
-
     let flowGraph = colorGraph(splitGraph,cfg);
-
-
-
-
-    //return [evalNew(parsedCode), ifStatements, newGraph];
     return flowGraph;
-    //return newGraph;
 };
 
 
@@ -496,8 +335,6 @@ const table = (parsedCode, params)=>{
 
 
 function addStatement(node){
-
-
     const choices = {
         'ExpressionStatement' : addExpression,
         'ReturnStatement' : addReturnStatement,
@@ -512,9 +349,7 @@ function addStatement(node){
         'BlockStatement' : iterateStatements
     };
     node.active = activeRun;
-
     return choices[node.type](node);
-
 }
 
 
@@ -622,15 +457,12 @@ function addWhileStatement(node){
     //appendObject(node.loc.start.line,node.type,'',getStatement(node.test),'');
     node.test.value = escodegen.generate(node.test);
     firstNode = true;
-    //console.log('in while')
-    //console.log(activeRun);
     let tmpActive = false;
     if (activeRun){
         let test = evalNew(getStatement(node.test));
         for (let num in globalParams) {
             test = test.replace(Object.keys(globalList)[num], evalNew(globalParams[num]));
         }
-        //console.log(test);
         if (eval(test) === false) {
             activeRun = false;
             tmpActive = true;
@@ -653,26 +485,16 @@ function addWhileStatement(node){
 
 
 function addIfStatement(node){
-
     //node.value = escodegen.generate(node.test);
     node.test.value = escodegen.generate(node.test);
-
     //let type = node.else ? 'else '+ node.type : node.type;
     //appendObject(node.loc.start.line,type,'',getStatement(node.test),'');
-
-
     let test = evalNew(getStatement(node.test));
-
-
     for (let num in globalParams) {
         test = test.replace(Object.keys(globalList)[num], evalNew(globalParams[num]));
     }
-
-
     let res = 'notActive';
-
     let tmpReactive = false;
-
     if (haveArgs && activeRun) {
         if (eval(test) === true) {
             res = 'true';
@@ -693,7 +515,6 @@ function addIfStatement(node){
 
     ifStatements.push(res);
 
-
     firstNode = true;
 
     let tmpLocalList = deepcopy(localList);
@@ -709,18 +530,13 @@ function addIfStatement(node){
     }
 
 
-
-
     let tmpActive = false;
 
     if (haveArgs && activeRun){
-
         if (res==='true'){
-
             activeRun = false;
             tmpActive = true;
         }
-
     }
 
 

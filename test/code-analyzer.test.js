@@ -13,8 +13,8 @@ describe('The javascript parser', () => {
 
     it('is parsing a simple variable declaration correctly', () => {
         assert.equal(
-            JSON.stringify(table(parseCode('let a = 1;'),parseCode('').body)),
-            '["let a = 1;",[]]'
+            JSON.stringify(table(parseCode('function foo(){let a = 1;}'),parseCode('').body)),
+            '\"n0 [xlabel=\\\"0\\\", shape=\\\"box\\\",  style=\\\"rounded\\\"]\\nn1 [xlabel=\\\"1\\\", color=\\\"green\\\", label=\\\"a=1\\n\\\", shape=\\\"box\\\", ]\\nn2 [xlabel=\\\"2\\\", shape=\\\"box\\\",  style=\\\"rounded\\\"]\\nn0 -> n1 []\\nn1 -> n2 []\\n\"'
         );
     });
 
@@ -25,13 +25,15 @@ describe('The javascript parser', () => {
 
 describe('Code-Analyzer - simple statements', () => {
 
-
+/*
     it('it is analyzing an empty statement correctly', () => {
         assert.equal(
             JSON.stringify(table(parseCode(''),parseCode('').body)),
             '[\"\",[]]'
         );
     });
+*/
+
 
 /*
     it('it is analyzing a full function correctly', () => {
