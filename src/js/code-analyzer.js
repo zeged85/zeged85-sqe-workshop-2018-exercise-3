@@ -301,6 +301,7 @@ const table = (parsedCode, params)=>{
     activeRun = true;
     if (params[0]) {
         console.log(params)
+
         if (params[0].expression.expressions) {
             globalParams = params[0].expression.expressions;
         }
@@ -496,8 +497,11 @@ function addIfStatement(node){
     //appendObject(node.loc.start.line,type,'',getStatement(node.test),'');
     let test = evalNew(getStatement(node.test));
     for (let num in globalParams) {
-        test = test.replace(Object.keys(globalList)[num], evalNew(globalParams[num]));
+        while (test.includes(Object.keys(globalList)[num])) {
+            test = test.replace(Object.keys(globalList)[num], evalNew(globalParams[num]));
+        }
     }
+
     let res = 'notActive';
     let tmpReactive = false;
     if (haveArgs && activeRun) {
